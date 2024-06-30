@@ -36,6 +36,25 @@ public class HomeController {
     public String getListPage() {
         return "lists";
     }
-    
+
+    @GetMapping("/signup")
+    public String getSignUpPage() {
+        return "signup";
+    }
+
+    @GetMapping("/login")
+    public String getLoginPage() {
+        return "login";
+    }
+
+    @GetMapping("/invites")
+    public String getInvitePage() {
+        return "invites";
+    }
+
+    @GetMapping("/user")
+    public String getUserPage() {
+        return "user";
+    }
     
 }
