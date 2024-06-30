@@ -31,5 +31,11 @@ public class HomeController {
     public String getHomePage() {
         return "home";
     }
+
+    @GetMapping("/lists")
+    public String getListPage() {
+        return "lists";
+    }
+    
     
 }
