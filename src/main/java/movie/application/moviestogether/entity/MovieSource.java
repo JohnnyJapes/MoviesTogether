@@ -44,6 +44,7 @@ public class MovieSource {
     @Column(name = "web_url")
     private String webURL;
 
+    @OneToOne
     @JoinColumn(name = "format_id")
     private Format format;
 
