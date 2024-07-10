@@ -55,6 +55,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<EventJoinUser> events;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    private List<WatchList> watchLists;
+
 
     public User() {};
 
