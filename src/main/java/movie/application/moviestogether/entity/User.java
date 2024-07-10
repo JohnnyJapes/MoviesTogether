@@ -1,6 +1,7 @@
 package movie.application.moviestogether.entity;
 
 import java.util.Collection;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -12,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -49,6 +51,11 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<Role> roles;
 
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<EventJoinUser> events;
+
+
     public User() {};
 
 
@@ -74,6 +81,18 @@ public class User {
         this.roles = roles;
     }
 
+
+    public User(int id, String firstName, String lastName, String userName, String email, String password, Boolean enabled, Collection<Role> roles, List<EventJoinUser> events) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+        this.enabled = enabled;
+        this.roles = roles;
+        this.events = events;
+    }
 
 
     @Override
@@ -158,6 +177,15 @@ public class User {
 
     public void setRoles(Collection<Role> roles) {
         this.roles = roles;
+    }
+
+
+    public List<EventJoinUser> getEvents() {
+        return this.events;
+    }
+
+    public void setEvents(List<EventJoinUser> events) {
+        this.events = events;
     }
 
 }
