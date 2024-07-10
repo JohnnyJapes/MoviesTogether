@@ -11,7 +11,7 @@ CREATE TABLE user (
   user_name varchar(255) NOT NULL,
   password char(80),
   enabled tinyint,
-  user_email varchar(100) unique NOT NULL
+  user_email varchar(200) unique NOT NULL
 );
 
 
@@ -65,3 +65,142 @@ VALUES
 (2, 1),
 (3, 1),
 (4,3);
+
+
+drop table if exists watchmode_tmdb;
+
+CREATE table watchmode_tmdb(
+
+	watchmode_id int not null,
+    tmdb_id int not null,
+    title varchar(255),
+    
+    primary key(tmdb_id)
+
+);
+
+
+drop table if exists movies;
+
+create table movies(
+	
+    id int primary key auto_increment,
+    tmdb_id int,
+    watchmode_id int not null,
+    title varchar(255),
+    director varchar(255),
+    year int,
+    description varchar(1000)
+
+);
+
+drop table if exists streaming_source;
+
+create table streaming_source(
+
+	source_id int primary key auto_increment,
+    name varchar(255),
+    logo varchar(400)
+
+);
+drop table if exists format;
+
+create table format(
+	
+    format_id int primary key auto_increment,
+    name varchar(10)
+);
+
+drop table if exists movie_source;
+
+create table movie_source(
+
+	source_id int,
+    movie_id int,
+    type varchar(100),
+    region varchar(5),
+    web_url varchar(500),
+    format_id int,
+    price double,
+    seasons int,
+    episodes int,
+    
+    primary key(source_id, movie_id),
+    foreign key(source_id) references streaming_source(source_id),
+    foreign key (movie_id) references movies(id),
+    foreign key (format_id) references `format`(format_id),
+    
+    KEY `FK_MOVIE_idx` (movie_id)
+);
+
+
+drop table if exists movie_event;
+
+create table movie_event(
+
+	id int primary key auto_increment,
+    event_datetime datetime not null,
+    movie_id int,
+    location varchar(255),
+    description varchar(500),
+    
+    foreign key(movie_id) references movies(id)
+
+);
+
+
+drop table if exists user_status;
+
+create table user_status(
+
+	id int auto_increment primary key,
+    name varchar(255)
+
+);
+
+insert into user_status(name) values("invited"),("accepted"), ("declined");
+
+
+drop table if exists user_event;
+
+create table user_event(
+
+	event_id int primary key,
+    user_id int,
+    status_id int,
+    
+    foreign key(status_id) references user_status(id),
+    foreign key(event_id) references movie_event(id),
+    foreign key(user_id) references user(user_id)
+
+);
+
+
+drop table if exists watchLists;
+
+create table watchLists(
+	
+    list_id int primary key auto_increment,
+    user_id int,
+    name varchar(255),
+    
+    foreign key(user_id) references user(user_id)
+
+);
+
+drop table if exists list_item;
+
+create table list_item(
+
+	item_id int primary key auto_increment,
+    list_id int,
+    movie_id int,
+    
+    foreign key(list_id) references watchLists(list_id),
+    foreign key(movie_id) references movies(id)
+
+);
+
+
+
+
