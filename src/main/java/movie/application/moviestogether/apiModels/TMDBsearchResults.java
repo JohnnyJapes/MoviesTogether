@@ -1,6 +1,6 @@
 package movie.application.moviestogether.apiModels;
 
-import java.lang.reflect.Array;
+
 import java.util.List;
 
 public class TMDBsearchResults {

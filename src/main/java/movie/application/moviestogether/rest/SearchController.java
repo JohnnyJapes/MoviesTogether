@@ -28,7 +28,7 @@ public class SearchController {
 
     
     @GetMapping("/{movieTitle}")
-    public TMDBsearchResults getSearchResults(@PathVariable String param) {
+    public TMDBsearchResults getSearchResults(@PathVariable String movieTitle) {
 
 
         TMDBsearchResults list = new TMDBsearchResults();
@@ -40,7 +40,7 @@ public class SearchController {
         OkHttpClient client = new OkHttpClient();
 
 		Request request = new Request.Builder()
-		  .url("https://api.themoviedb.org/3/search/movie?query="+ param +"&include_adult=false&language=en-US&page=1")
+		  .url("https://api.themoviedb.org/3/search/movie?query="+ movieTitle +"&include_adult=false&language=en-US&page=1")
 		  .get()
 		  .addHeader("accept", "application/json")
 		  .addHeader("Authorization", "Bearer "+props.getProperty("TMDBAPI"))
