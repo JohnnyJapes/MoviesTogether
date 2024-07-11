@@ -37,9 +37,9 @@ public class HomeController {
         return "lists";
     }
 
-    @GetMapping("/signup")
-    public String getSignUpPage() {
-        return "signup";
+    @GetMapping("/register")
+    public String getRegisterPage() {
+        return "register";
     }
 
     @GetMapping("/login")
