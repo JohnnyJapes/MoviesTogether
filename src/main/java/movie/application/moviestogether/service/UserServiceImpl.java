@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
+import jakarta.transaction.Transactional;
 import movie.application.moviestogether.dao.RoleRepository;
 import movie.application.moviestogether.dao.UserRepository;
 import movie.application.moviestogether.validation.UserValidation;
@@ -47,9 +47,11 @@ public class UserServiceImpl implements UserService{
 	}
 
     @Override
+	@Transactional
 	public void save(UserValidation data) {
 		User user = new User();
 		
+		user.setUserName(data.getUserName());
 		user.setEmail(data.getEmail());
 		user.setFirstName(data.getFirstName());
 		user.setLastName(data.getLastName());
@@ -65,16 +67,16 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-		User user = uRepo.findByEmail(userName);
+		User user = uRepo.findByUserName(userName);
 
 		if (user == null) {
-			System.out.println("Invalid email or password");
-			throw new UsernameNotFoundException("Invalid email or password.");
+			System.out.println("Invalid username or password");
+			throw new UsernameNotFoundException("Invalid username or password.");
 		}
 
 		Collection<SimpleGrantedAuthority> authorities = mapRolesToAuthorities(user.getRoles());
 
-		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
+		return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(),
 				authorities);
 	}
 
@@ -87,6 +89,17 @@ public class UserServiceImpl implements UserService{
 		}
 
 		return authorities;
+	}
+	
+
+	@Override
+	public User findByUserName(String userName) {
+		User result = uRepo.findByUserName(userName);
+		if (result!=null) return  result;
+		else {
+			System.out.println("Did not find username - " +userName);
+			return result;
+		}
 	}
     
 }
