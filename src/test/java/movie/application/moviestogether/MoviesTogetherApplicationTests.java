@@ -1,6 +1,8 @@
 package movie.application.moviestogether;
 
+import java.io.FileInputStream;
 import java.util.List;
+import java.util.Properties;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,13 +46,16 @@ class MoviesTogetherApplicationTests {
 	@Test
 	void testTMDBAPI() throws Exception{
 
+		Properties props = new Properties();
+		props.load(new FileInputStream("apikeys.env"));
+
 		OkHttpClient client = new OkHttpClient();
 
 		Request request = new Request.Builder()
 		  .url("https://api.themoviedb.org/3/search/movie?query=scream&include_adult=false&language=en-US&page=1")
 		  .get()
 		  .addHeader("accept", "application/json")
-		  .addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyODgxODIwZTI3OWFkZGMzN2MzYzNjOTUyYjJlM2VkNCIsIm5iZiI6MTcyMDI4MTY1NS4zNDY3NSwic3ViIjoiNjRmYjZjNjVmZmM5ZGUwZWUzYzM5MDkxIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.nSYJdYj2OYcVMf4bIIcyZ0BkOF04bYTTmiL78WdMgKI")
+		  .addHeader("Authorization", "Bearer "+ props.getProperty("TMDBAPI"))
 		  .build();
 		
 		Response response = client.newCall(request).execute();
