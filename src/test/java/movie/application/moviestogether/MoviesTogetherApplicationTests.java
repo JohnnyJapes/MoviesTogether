@@ -1,9 +1,12 @@
 package movie.application.moviestogether;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.Properties;
 
+import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -66,6 +69,8 @@ class MoviesTogetherApplicationTests {
 		TMDBsearchResults results = objectMapper.readValue(json, TMDBsearchResults.class);
 
 		System.out.println(results.getTotal_pages());
+
+		assertEquals(results.getResults().get(1).getTitle(), "Scream");
 	}
 
 
