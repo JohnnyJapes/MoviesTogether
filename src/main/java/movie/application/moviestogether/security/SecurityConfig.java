@@ -37,21 +37,7 @@ public class SecurityConfig {
         public BCryptPasswordEncoder passwordEncoder() {
             return new BCryptPasswordEncoder();
         }
-        /*
-         * @Bean public UserDetailsManager userDetailsManager(DataSource dataSource) {
-         * 
-         * JdbcUserDetailsManager jUDM= new JdbcUserDetailsManager(dataSource);
-         * 
-         * //define query to retrieve a user by username jUDM.setUsersByUsernameQuery(
-         * "Select customer_email, password, active FROM customer where customer_email=?"
-         * );
-         * 
-         * //define query to retrieve the authorities/roles by username
-         * jUDM.setAuthoritiesByUsernameQuery(
-         * "SELECT customer_email, role from roles where customer_email=?");
-         * 
-         * return jUDM; }
-         */
+        
         
         
         @Bean
@@ -65,8 +51,8 @@ public class SecurityConfig {
                 .requestMatchers("/home/**").permitAll()
                 .requestMatchers("/home/*").permitAll()
                 .requestMatchers("/register").permitAll()
-                .requestMatchers(HttpMethod.GET,"/search/api/**").permitAll()
-                .requestMatchers(HttpMethod.GET,"/search/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/tmdb/details/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/tmdb/search/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/store/**").permitAll()
                 .requestMatchers("/register/**").permitAll()
                 .requestMatchers("/lists/**").hasAnyRole("CUSTOMER", "ADMIN")

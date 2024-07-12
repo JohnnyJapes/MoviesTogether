@@ -23,7 +23,7 @@ public class Movie {
 
 
     @Column(name = "tmdb_id")
-    private int tmdb_id;
+    private int tmdbID;
 
     @Column(name = "watchmode_id")
     private int watchmode_id;
@@ -37,6 +37,9 @@ public class Movie {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "poster_path")
+    private String posterPath;
+
 
     @OneToMany
     @JoinColumn(name = "movie_id",  referencedColumnName = "id")
@@ -49,15 +52,17 @@ public class Movie {
     }
 
 
-    public Movie(int id, int tmdb_id, int watchmode_id, String title, String director, String description, List<MovieSource> sources) {
+    public Movie(int id, int tmdb_id, int watchmode_id, String title, String director, String description, String posterPath, List<MovieSource> sources) {
         this.id = id;
-        this.tmdb_id = tmdb_id;
+        this.tmdbID = tmdb_id;
         this.watchmode_id = watchmode_id;
         this.title = title;
         this.director = director;
         this.description = description;
+        this.posterPath = posterPath;
         this.sources = sources;
     }
+
 
 
     public int getId() {
@@ -68,12 +73,12 @@ public class Movie {
         this.id = id;
     }
 
-    public int getTmdb_id() {
-        return this.tmdb_id;
+    public int getTmdbID() {
+        return this.tmdbID;
     }
 
-    public void setTmdb_id(int tmdb_id) {
-        this.tmdb_id = tmdb_id;
+    public void setTmdbID(int tmdb_id) {
+        this.tmdbID = tmdb_id;
     }
 
     public int getWatchmode_id() {
@@ -114,6 +119,14 @@ public class Movie {
 
     public void setSources(List<MovieSource> sources) {
         this.sources = sources;
+    }
+
+    public String getPosterPath() {
+        return this.posterPath;
+    }
+
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
     }
     
     
