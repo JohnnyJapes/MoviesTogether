@@ -90,7 +90,8 @@ create table movies(
     title varchar(255),
     director varchar(255),
     year int,
-    description varchar(1000)
+    description varchar(1000),
+    poster_path varchar(400)
 
 );
 
@@ -195,6 +196,7 @@ create table list_item(
 	item_id int primary key auto_increment,
     list_id int,
     movie_id int,
+    list_rank int,
     
     foreign key(list_id) references watchLists(list_id),
     foreign key(movie_id) references movies(id)
