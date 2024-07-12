@@ -8,6 +8,8 @@ import java.util.Properties;
 
 import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -16,6 +18,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import movie.application.moviestogether.apiModels.TMDBsearchResults;
 import movie.application.moviestogether.dao.MovieRepository;
 import movie.application.moviestogether.entity.Movie;
+import movie.application.moviestogether.entity.WatchList;
+import movie.application.moviestogether.service.WatchListService;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -24,8 +28,17 @@ import okhttp3.Response;
 class MoviesTogetherApplicationTests {
 
 
-	@Autowired
+
 	private MovieRepository movieRepo;
+	private WatchListService listService;
+	private static final Logger LOGGER = LoggerFactory.getLogger(MoviesTogetherApplicationTests.class);
+
+	@Autowired
+	public MoviesTogetherApplicationTests(MovieRepository movieRepo, WatchListService listService) {
+		this.movieRepo = movieRepo;
+		this.listService = listService;
+	}
+	
 
 	@Test
 	void contextLoads() {
@@ -68,10 +81,27 @@ class MoviesTogetherApplicationTests {
 
 		TMDBsearchResults results = objectMapper.readValue(json, TMDBsearchResults.class);
 
-		System.out.println(results.getTotal_pages());
 
 		assertEquals(results.getResults().get(1).getTitle(), "Scream");
 	}
+
+	@Test
+	void testWatchListSort() throws Exception{
+
+		WatchList list = listService.findById(1);
+		assertEquals(list.getMovies().get(0).getRank(), 1);
+
+	}
+
+
+	@Test
+	void testGetDirector() throws Exception{
+
+		WatchList list = listService.findById(1);
+		assertEquals(list.getMovies().get(0).getRank(), 1);
+
+	}
+
 
 
 
