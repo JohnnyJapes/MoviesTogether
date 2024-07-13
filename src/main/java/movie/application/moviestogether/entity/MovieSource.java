@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -19,13 +20,16 @@ public class MovieSource {
 
 
     @Id
-    @Column(name = "movie_id")
-    private int movieID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
 
-    @Id
     @OneToOne
     @JoinColumn(name = "source_id")
     private Source source;
+
+    @Column(name = "movie_id")
+    private int movieID;
 
 
     @Column(name = "tmdb_id")

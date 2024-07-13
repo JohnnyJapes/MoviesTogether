@@ -116,7 +116,8 @@ drop table if exists movie_source;
 
 create table movie_source(
 
-	source_id int,
+	id int primary key auto_increment,
+    source_id int,
     movie_id int,
     type varchar(100),
     region varchar(5),
@@ -126,7 +127,6 @@ create table movie_source(
     seasons int,
     episodes int,
     
-    primary key(source_id, movie_id),
     foreign key(source_id) references streaming_source(source_id),
     foreign key (movie_id) references movies(id),
     foreign key (format_id) references `format`(format_id),
