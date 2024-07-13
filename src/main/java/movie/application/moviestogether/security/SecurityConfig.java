@@ -48,16 +48,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
                 .requestMatchers("/").permitAll()
                 //.requestMatchers("/*").permitAll()
-                .requestMatchers("/home/**").permitAll()
-                .requestMatchers("/home/*").permitAll()
-                .requestMatchers("/register").permitAll()
-                .requestMatchers(HttpMethod.GET,"/api/tmdb/details/**").permitAll()
-                .requestMatchers(HttpMethod.GET,"/api/tmdb/search/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/store/**").permitAll()
-                .requestMatchers("/register/**").permitAll()
-                .requestMatchers("/lists/**").hasAnyRole("CUSTOMER", "ADMIN")
-                .requestMatchers("/user/**").authenticated()
-                .requestMatchers("/lists/**").authenticated())
+                .requestMatchers("/home").permitAll()
+                //.requestMatchers(HttpMethod.GET,"/api/tmdb/search/**").permitAll()
+
+                .requestMatchers("/**").authenticated())
                 .formLogin(form ->form.loginPage("/login")
                         .loginProcessingUrl("/authenticateTheUser")
                         .successHandler(customAuthenticationSuccessHandler)
@@ -71,7 +65,7 @@ public class SecurityConfig {
             
             //disable cross site request forgery (CSRF)
             //in general, not required for stateless REST APIs that use POST, PUT, DELETE
-            //http.csrf(csrf -> csrf.disable());
+            http.csrf(csrf -> csrf.disable());
             
             return http.build();
     

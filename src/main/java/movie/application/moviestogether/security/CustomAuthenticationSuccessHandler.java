@@ -32,7 +32,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         System.out.println("userName=" + userName);
 
-        User theUser = userService.findByEmail(userName);
+        User theUser = userService.findByUserName(userName);
 
         // now place in the session
         HttpSession session = request.getSession();
