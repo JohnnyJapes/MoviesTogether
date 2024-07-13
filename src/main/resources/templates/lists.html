@@ -32,9 +32,9 @@
 
 
     <h3 class="my-3">Add new Movies</h3>
-    <form class="mb-2 row" role="search">
-        <input class="form-control me-2 col-3" type="search" placeholder="Search" aria-label="Search">
-        <button type="button" class="btn btn-primary col-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Search</button>
+    <form class="mb-2 row" role="search" id="searchForm">
+        <input class="form-control me-2 col-3" type="search" id="searchBox" placeholder="Search" aria-label="Search">
+        <button type="submit" id="searchButton" class="btn btn-primary col-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Search</button>
     </form>
 
 
@@ -51,7 +51,6 @@
                 </div>
                 <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Understood</button>
                 </div>
             </div>
         </div>
@@ -64,46 +63,27 @@
 
         <div class="col-7">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">List 1</button>
+                
+                <li class="nav-item" role="presentation" th:each="watchList : ${watchLists}">
+                  <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" th:attr="data-bs-target='#List'+${watchList.id}" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">List 1</button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <!-- <li class="nav-item" role="presentation">
                   <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">List 2</button>
                 </li>
                 <li class="nav-item" role="presentation">
                   <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">Watched</button>
-                </li>
+                </li> -->
               </ul>
               <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
                     This will contain a list of movies
                 <row class="row g-3">
-                    <div class="col">
+                    <div class="col" th:each="listItem : ${watchLists[0].movies}">
                         <div class="card" style="width: 18rem;">
                             <img src="https://placehold.co/100" class="card-img-top" alt="...">
                             <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card" style="width: 18rem;">
-                            <img src="https://placehold.co/100" class="card-img-top" alt="...">
-                            <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card" style="width: 18rem;">
-                            <img src="https://placehold.co/100" class="card-img-top" alt="...">
-                            <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <h5 class="card-title" th:text="${listItem.movie.title}">Card title</h5>
+                            <p class="card-text" th:text="${listItem.movie.description}">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                             <a href="#" class="btn btn-primary">Go somewhere</a>
                             </div>
                         </div>
@@ -112,9 +92,9 @@
                 
                 
                 </div>
-                <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">...</div>
-                <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">...</div>
-                <div class="tab-pane fade" id="disabled-tab-pane" role="tabpanel" aria-labelledby="disabled-tab" tabindex="0">...</div>
+                <div class="tab-pane fade" id="profile-tab-pane" th:id="'#List'+${watchList.id}" role="tabpanel" aria-labelledby="profile-tab" tabindex="0" th:each="watchList, wStat : ${watchLists}" th:if="${wStat.count} &gt; 1">...</div>
+                <!-- <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">...</div>
+                <div class="tab-pane fade" id="disabled-tab-pane" th:id="${watchList.name}" role="tabpanel" aria-labelledby="disabled-tab" tabindex="0">...</div> -->
               </div>
         </div>
         <div class="col-5">
@@ -142,15 +122,22 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"
 integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 <script th:incline="javascript">
+
+function addToList(tmdbID){
+        console.log("Tried to add")
+
+    }
 $(document).ready(function () {
 
 
-    $("#checkoutButton").on("click", function(){
-        sessionStorage.clear();
-    })
 
-    let total = 0;
-    getProducts();
+
+    $("#searchForm").on("submit", function(event){
+        event.preventDefault();
+        title = $("#searchBox").val()
+        $("#searchModalBody").empty();
+        getSearchResults(title);
+    });
 
     $("#newAddress").on("click", function()
     {
@@ -183,33 +170,36 @@ $(document).ready(function () {
     })
 
    // $("#total").text(`${total}`)
-    function getSearchResults() {
+    function getSearchResults(title) {
+        
         let i = 0;
 
-        console.log(`localhost:8080/`) //call to get search results eventually once API is implemented
-        $.getJSON(`http://localhost:8080/api/movies/search`, function (data, status) {
+        console.log(`localhost:8080/api/tmdb/search/${title}`) //call to get search results eventually once API is implemented
+        $.getJSON(`http://localhost:8080/api/tmdb/search/${title}`, function (data, status) {
             //alert("Data: " + JSON.stringify(data) + "\nStatus: " + status);
             console.log("start movie fetch ajax")
             console.log(data)
             // append to search modal which will display results and let user select what movie to add
             //this will need to be looped for each result returned, limit to 10 results
-            $("#searchModalBody").append(`
-            <tr>
-                    <th scope="row">
-                        <row class="row">
-                            <img src="${data.images[0].location}" class="col-3" alt="">
-                            <div class="col-8 row">
-                                <a href="" class="fs-6" style="">Movie Title</a>
-                                <a href="/store/products/${data.sku}" class="fs-5">Director</a>
-                            </div>
-                        </row>
-                    </th>
-                    <td>${cart[item].quantity}</td>
-                    <td style="width: 4rem">$ ${ (cart[item].quantity * data.price).toFixed(2)}</td>
-            </tr>
-            `)
+            for (let index = 0; index < data.results.length && index <= 6; index++) {
+                $("#searchModalBody").append(`
+                <tr class="pb-3">
+                        <th scope="row ">
+                            <row class="row ">
+                                <div class="row">
+                                    <p class="fs-5" style="">${data.results[index].title} (${data.results[index].release_date.substring(0,4)})</p>
+                                    <p class="fw-normal fs-6">${data.results[index].overview.substring(0,100) + "..."}</p>
+                                </div>
+                                <button type="button" class="btn btn-primary" onClick="addToList(${data.results[index].id})">Add Movie to List</button>
+                            </row>
+                        </th>
+                </tr>
+                `)
 
-            i++;
+                
+                
+            }
+ 
         }).fail(function (request, status,error) {
             console.log(request)
             console.log(status)
@@ -220,7 +210,9 @@ $(document).ready(function () {
 
             
 
-        }
+    }
+
+
 
 })
 </script>

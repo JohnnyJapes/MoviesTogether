@@ -2,6 +2,7 @@ package movie.application.moviestogether.rest;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -15,6 +16,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -27,17 +30,17 @@ public class tmdbController {
     
 
     
-    @GetMapping("/search/{movieTitle}")
+    @GetMapping(value = "/search/{movieTitle}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TMDBsearchResults getSearchResults(@PathVariable String movieTitle) {
 
-
-        TMDBsearchResults list = new TMDBsearchResults();
-
 		try {
+        TMDBsearchResults list = new TMDBsearchResults();
+        OkHttpClient client;
+
             props.load(new FileInputStream("apikeys.env"));
 
 
-        OkHttpClient client = new OkHttpClient();
+        client = new OkHttpClient();
 
 		Request request = new Request.Builder()
 		  .url("https://api.themoviedb.org/3/search/movie?query="+ movieTitle +"&include_adult=false&language=en-US&page=1")
@@ -45,7 +48,7 @@ public class tmdbController {
 		  .addHeader("accept", "application/json")
 		  .addHeader("Authorization", "Bearer "+props.getProperty("TMDBAPI"))
 		  .build();
-		
+
 		Response response = client.newCall(request).execute();
 
 		String json = response.body().string();
@@ -55,13 +58,15 @@ public class tmdbController {
 
 		System.out.println(results.getTotal_pages());
         list = results;
-    } catch (FileNotFoundException e) {
-        e.printStackTrace();
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-        return list;
+
         
+        return list;
+        } 
+        catch (IOException e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatusCode.valueOf(500));
+            
+        }
     }
 
 

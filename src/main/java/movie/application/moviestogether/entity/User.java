@@ -192,4 +192,13 @@ public class User {
         this.events = events;
     }
 
+    public List<WatchList> getWatchLists() {
+        return this.watchLists;
+    }
+
+    public void setWatchLists(List<WatchList> watchLists) {
+        this.watchLists = watchLists;
+    }
+
+
 }
