@@ -32,12 +32,6 @@ public class MovieSource {
     private int movieID;
 
 
-    @Column(name = "tmdb_id")
-    private int tmdb_id;
-
-    @Column(name = "watchmode_id")
-    private int watchmode_id;
-
     @Column(name = "type")
     private String type;
 
@@ -67,11 +61,11 @@ public class MovieSource {
     }
 
 
-    public MovieSource(int movieID, Source source, int tmdb_id, int watchmode_id, String type, String region, String webURL, Format format, double price, int seasons, int episodes) {
-        this.movieID = movieID;
+
+    public MovieSource(int id, Source source, int movieID, String type, String region, String webURL, Format format, double price, int seasons, int episodes) {
+        this.id = id;
         this.source = source;
-        this.tmdb_id = tmdb_id;
-        this.watchmode_id = watchmode_id;
+        this.movieID = movieID;
         this.type = type;
         this.region = region;
         this.webURL = webURL;
@@ -98,21 +92,7 @@ public class MovieSource {
         this.source = source;
     }
 
-    public int getTmdb_id() {
-        return this.tmdb_id;
-    }
 
-    public void setTmdb_id(int tmdb_id) {
-        this.tmdb_id = tmdb_id;
-    }
-
-    public int getWatchmode_id() {
-        return this.watchmode_id;
-    }
-
-    public void setWatchmode_id(int watchmode_id) {
-        this.watchmode_id = watchmode_id;
-    }
 
     public String getType() {
         return this.type;
