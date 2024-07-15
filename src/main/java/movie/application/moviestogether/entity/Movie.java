@@ -40,6 +40,9 @@ public class Movie {
     @Column(name = "poster_path")
     private String posterPath;
 
+    @Column(name = "year")
+    private int year;
+
 
     @OneToMany
     @JoinColumn(name = "movie_id",  referencedColumnName = "id")
@@ -63,6 +66,18 @@ public class Movie {
         this.sources = sources;
     }
 
+
+    public Movie(int id, int tmdbID, int watchmode_id, String title, String director, String description, String posterPath, int year, List<MovieSource> sources) {
+        this.id = id;
+        this.tmdbID = tmdbID;
+        this.watchmode_id = watchmode_id;
+        this.title = title;
+        this.director = director;
+        this.description = description;
+        this.posterPath = posterPath;
+        this.year = year;
+        this.sources = sources;
+    }
 
 
     public int getId() {
@@ -129,5 +144,12 @@ public class Movie {
         this.posterPath = posterPath;
     }
     
+    public int getYear() {
+        return this.year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
     
 }
