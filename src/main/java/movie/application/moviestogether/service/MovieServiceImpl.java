@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.transaction.Transactional;
@@ -67,9 +68,8 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Movie findByTmdb_id(int tmdb_id) {
-        // TODO Auto-generated method stub
         Movie result = movieRepo.findByTmdbID(tmdb_id);
-		if (result != null) return  result;
+		if (result != null){ return  result;}
 		else
 			throw new RuntimeException("Did not find movie with TMDB ID - " +tmdb_id);
     }
@@ -77,7 +77,10 @@ public class MovieServiceImpl implements MovieService {
 
     public void addDirector(Movie movie){
         String directorName = getDirector(movie);
-        if(directorName != "") save(movie);
+        if(directorName != "") {
+            movie.setDirector(directorName);
+            save(movie);
+        }
         else
             throw new RuntimeException("Could not find director for provided movie with TMDB ID - " + movie.getTmdbID());
     }
@@ -140,6 +143,59 @@ public class MovieServiceImpl implements MovieService {
         return directorName;
     }
 
-        
+
+
+
+    @Override
+    public void getDetails(Movie movie) {
+
+        OkHttpClient client = new OkHttpClient();
+        String query = StringEscapeUtils.escapeHtml4(Integer.toString(movie.getTmdbID()));
+
+        String poster_path = "";
+        String overview = "";
+        try{
+
+            props.load(new FileInputStream("apikeys.env"));
+
+            Request request = new Request.Builder()
+                    .url("https://api.themoviedb.org/3/movie/" + query + "?language=en-US")
+                    .get()
+                    .addHeader("accept", "application/json")
+                    .addHeader("Authorization", "Bearer "+props.getProperty("TMDBAPI"))
+                    .build();
+            Response response = client.newCall(request).execute();
+            JsonFactory factory = new JsonFactory();
+            JsonParser parser = factory.createParser(response.body().string());
+            JsonToken token = parser.nextToken();
+
+        while(!"overview".equals(parser.currentName())) token = parser.nextToken();
+        token = parser.nextToken();
+        overview = parser.getText();
+        while(!"popularity".equals(parser.currentName())) token = parser.nextToken();
+        while(!"poster_path".equals(parser.currentName())) token = parser.nextToken();
+        token = parser.nextToken();
+        poster_path = parser.getText();
+        parser.close();
+
+        }
+        catch(Error | IOException e){
+            System.out.println(e);
+            e.printStackTrace();
+
+        }
+
+        movie.setPosterPath(poster_path);
+        movie.setDescription(overview);
+        save(movie);
+        // ObjectMapper mapper = new ObjectMapper();
+        // // Configure ObjectMapper to ignore unknown properties
+        // mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+
+        // throw new UnsupportedOperationException("Unimplemented method 'getDetails'");
+    }
+
+  
     
 }

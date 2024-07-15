@@ -8,6 +8,7 @@ import movie.application.moviestogether.entity.ListItem;
 import movie.application.moviestogether.entity.Movie;
 import movie.application.moviestogether.entity.User;
 import movie.application.moviestogether.entity.WatchList;
+import movie.application.moviestogether.dao.ListItemRepository;
 import movie.application.moviestogether.service.MovieService;
 import movie.application.moviestogether.service.UserService;
 import movie.application.moviestogether.service.WatchListService;
@@ -17,6 +18,7 @@ import java.util.List;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +34,17 @@ public class WatchlistController {
     MovieService movieService;
     UserService userService;
     WatchListService watchListService;
+    ListItemRepository itemRepo;
+
+
+
+
+    public WatchlistController(MovieService movieService, UserService userService, WatchListService watchListService, ListItemRepository itemRepo) {
+        this.movieService = movieService;
+        this.userService = userService;
+        this.watchListService = watchListService;
+        this.itemRepo = itemRepo;
+    }
 
 
 
@@ -46,8 +59,8 @@ public class WatchlistController {
 
     //Read
     @GetMapping("/")
-    public String getMethodName(@RequestParam(name = "manuId",required = false) Integer manuId, @RequestParam(required = false) List<String> filters,
-    Model theModel, Authentication authentication, @RequestParam(name = "searchText",required = false) String searchString) {
+    public String getMethodName(@RequestParam(name = "listId",required = true) Integer listId, 
+    Model theModel, Authentication authentication) {
         return new String();
     }
 
@@ -56,19 +69,15 @@ public class WatchlistController {
     @PostMapping("/addListItem")
     public String addListItem(@RequestParam(name = "tmdbId",required = true) Integer tmbdId, @RequestParam(name = "listId",required = true) Integer listId, 
     Model theModel, Authentication authentication) {
-        //TODO: process POST request
-
-
+        //TODO: better return
         
         String userName = authentication.getName();
-
-        System.out.println("userName=" + userName);
-
         User theUser = userService.findByUserName(userName);
         Movie addition = movieService.findByTmdb_id(tmbdId);
 
 
-        if(addition.getDirector() == "") movieService.addDirector(addition);
+        if(addition.getDirector() == null) movieService.addDirector(addition);
+        if(addition.getPosterPath() == null) movieService.getDetails(addition);
         List<WatchList> userWatchlists = theUser.getWatchLists();
         WatchList targetWatchList = new WatchList();
         targetWatchList.setName("notFound");
@@ -96,6 +105,48 @@ public class WatchlistController {
         
         return "Success: Added " + addition.getTitle() +  " to list" ;
     }
+
+        //Delete
+        //test info = localhost:8080/api/list/removeListItem?itemId=4&listId=1
+        @PostMapping("/removeListItem")
+        public String removeListItem(@RequestParam(name = "itemId",required = true) Integer itemId, @RequestParam(name = "listId",required = true) Integer listId, 
+        Model theModel, Authentication authentication) {
+
+
+            WatchList list = watchListService.findById(listId);
+            String userName = authentication.getName();
+            User theUser = userService.findByUserName(userName);
+
+
+            if(list.getUserID() != theUser.getId()){
+                throw new ResponseStatusException(HttpStatusCode.valueOf(400));
+            }
+
+            ListItem item = new ListItem();
+            item.setRank(-1);
+            List<ListItem> items = list.getMovies();
+            int listSize = items.size();
+            for (int i = 0; i< listSize; i++){
+                if (items.get(i).getId() == itemId) item = items.get(i);
+            }
+            if(item.getRank() == -1) throw new ResponseStatusException(HttpStatusCode.valueOf(400));
+            int oldRank = item.getRank();
+            
+            System.out.println("TEST");
+            //remove from list so item can be deleted from database
+            list.getMovies().remove(oldRank-1);
+            itemRepo.delete(item);
+            //fix ranks
+            for (int i = oldRank-1; i < items.size(); i++ ){
+                int currentRank = items.get(i).getRank();
+                items.get(i).setRank(currentRank -1);
+            }
+
+            watchListService.save(list);
+
+
+            return "Success";
+        }
     
     
     

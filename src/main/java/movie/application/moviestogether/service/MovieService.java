@@ -12,5 +12,6 @@ public interface MovieService {
     Movie findByTmdb_id(int tmdb_id);
     public void addDirector(Movie movie);
     public String getDirector(Movie movie);
+    public void getDetails(Movie movie);
     
 }

@@ -28,7 +28,6 @@ public class WatchListServiceImpl implements WatchListService {
     @Override
     @Transactional
     public void save(WatchList list) {
-        // TODO Auto-generated method stub
         watchRepo.save(list);
     }
 
