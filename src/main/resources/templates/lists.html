@@ -83,10 +83,11 @@
                         <div class="card" style="width: 12rem;">
                             <img th:src="|https://image.tmdb.org/t/p/w300/${listItem.movie.posterPath}|" class="card-img-top" alt="...">
                             <div class="card-body">
-                            <h5 class="card-title" th:text="|${listItem.movie.title} (${listItem.movie.year})|">Card title</h5>
+                            <h5 class="card-title" th:text="|${listItem.rank}.${listItem.movie.title} (${listItem.movie.year})|">Card title</h5>
                             <p class="card-text text-truncate" th:text="${listItem.movie.description}">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                             <btn 
-                            th:data-i="${iStat}" 
+                            
+                            th:onclick="|displayDetails(${watchList.id},${listItem.rank})|"
                             th:id="'List'+${watchList.id}+'-'+${listItem.id}" class="btn btn-primary">Display details</btn>
                             <btn th:href="@{/api/list/removeListItem(itemId=${listItem.id},listId=${watchList.id})}" 
                             th:onclick="|deleteFromList(${listItem.id},${listItem.listID})|" id="delete" class="btn btn-danger">Remove</btn>
@@ -124,7 +125,7 @@
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"
 integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
-<script th:incline="javascript">
+<script th:inline="javascript">
 
     function addToList(tmdbID, listId){
             console.log("Tried to add")
@@ -167,6 +168,40 @@ integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="ano
         };
     })
 
+    function displayDetails(listId, itemRank){
+        let details = $("#details");
+        //document.getElementbyId("details");
+        details.empty();
+        let lists = /*[[${watchLists}]]*/ null;;
+        let list;
+        console.log(listId)
+        for (let index = 0; index < lists.length; index++) {
+            console.log(lists[index].id)
+            if(listId == lists[index].id) list = lists[index];
+            
+        }
+        //console.log(list)
+        let movie = list.movies[itemRank-1].movie;
+        let path = movie.posterPath;
+        let title = movie.title;
+        let description = movie.description;
+        let year = movie.year;
+        let director = movie.director;
+        details.append(
+            `
+            <img class="img-fluid m-2" src="https://image.tmdb.org/t/p/w300/${path}" alt="">
+            <h3>${title} (${year})</h3>
+            <h3>Director: ${director}</h3>
+            <h4>Summary: </h4>
+            <p>${description} (From TMDB)</p>
+
+            <input type="date" name="invite">
+            <button class="btn btn-primary"> Create Invite</button>
+        </div>
+        `
+        )
+    }
+
 
 $(document).ready(function () {
 
@@ -179,12 +214,12 @@ $(document).ready(function () {
         displayDetails(i);
     });
 
-    function displayDetails(iterator){
+    function displayDetails1(iterator){
         let details = $("#details");
         //document.getElementbyId("details");
         details.empty();
-        //lists = [[${watchLists}]];
-        //let path = lists[iterator].movies.movie.poster_path;
+        let lists = /*[[${watchLists}]]*/ null;;
+        let path = lists[iterator].movies[0].movie.poster_path;
         details.append(
             `
             <img class="img-fluid m-2" src="${path}" alt="">
@@ -197,7 +232,7 @@ $(document).ready(function () {
             <button class="btn btn-primary"> Create Invite</button>
         </div>
         `
-    )
+        )
     }
 
 
