@@ -29,8 +29,8 @@
 		</div>
         <div th:if="${alert}" class="col">
 	
-			<div class="alert alert-success alert-dismissible" th:text="${alert.message}">
-				You have been logged out.
+			<div class="alert alert-success alert-dismissible fade show"  role="alert">
+				<span th:text="${alert.message}"></span>
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 			</div>
 		</div>
