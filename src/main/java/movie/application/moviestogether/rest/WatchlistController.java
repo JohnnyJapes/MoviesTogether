@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import jakarta.validation.Valid;
 import movie.application.moviestogether.entity.ListItem;
 import movie.application.moviestogether.entity.Movie;
 import movie.application.moviestogether.entity.User;
@@ -12,14 +13,17 @@ import movie.application.moviestogether.dao.ListItemRepository;
 import movie.application.moviestogether.service.MovieService;
 import movie.application.moviestogether.service.UserService;
 import movie.application.moviestogether.service.WatchListService;
+import movie.application.moviestogether.validation.WatchListValidation;
 
 import java.util.List;
 
 import org.springframework.http.HttpStatusCode;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,10 +54,25 @@ public class WatchlistController {
 
     //Create
     @PostMapping("/create")
-    public String createWatchList(@RequestBody String entity) {
-        //TODO: process POST request
+    public String createWatchList(@Valid @ModelAttribute("newWatchList") WatchListValidation listValidation
+            ,BindingResult bindingResult,
+            Model theModel, Authentication authentication) 
+        {
+
+        // form validation
+		 if (bindingResult.hasErrors()){
+			 return "Invalid Input";
+		 }
+
+        String userName = authentication.getName();
+        User theUser = userService.findByUserName(userName);
+        WatchList watchList = new WatchList();
+        watchList.setUserID(theUser.getId());
+        watchList.setName(listValidation.getName());
+        watchListService.save(watchList);
+
         
-        return entity;
+        return "Successfully created list: " + listValidation.getName();
     }
 
 
