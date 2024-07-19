@@ -167,6 +167,38 @@ public class WatchlistController {
             return "Success";
         }
     
+        //Delete
+        //test info = localhost:8080/api/list/removeListItem?itemId=4&listId=1
+        @PostMapping("/deleteList")
+        public String removeListItem(@RequestParam(name = "listId",required = true) Integer listId, 
+        Model theModel, Authentication authentication) {
+
+
+            WatchList list = watchListService.findById(listId);
+            String userName = authentication.getName();
+            User theUser = userService.findByUserName(userName);
+
+
+            if(list.getUserID() != theUser.getId()){
+                throw new ResponseStatusException(HttpStatusCode.valueOf(400));
+            }
+            int index = -1;
+            List<WatchList> lists = theUser.getWatchLists();
+
+            for (int i = 0; i < lists.size(); i++) {
+                if (lists.get(i).getId() == list.getId()) index = i;
+                
+            }
+            if (index >= 0) theUser.getWatchLists().remove(index);
+            else{
+                throw new ResponseStatusException(HttpStatusCode.valueOf(400));
+            }
+
+            watchListService.delete(list);
+
+
+            return "Success - Deleted list: " + listId;
+        }
     
     
 }

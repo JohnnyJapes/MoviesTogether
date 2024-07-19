@@ -19,5 +19,7 @@ public interface WatchListService {
 
     List<WatchList> findByUserID(int userID);
 
+    void delete(WatchList list);
+
     
 }

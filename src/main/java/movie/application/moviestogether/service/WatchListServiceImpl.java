@@ -55,5 +55,11 @@ public class WatchListServiceImpl implements WatchListService {
     public List<WatchList> findByUserID(int userID) {
         return watchRepo.findByUserID(userID);
     }
+
+
+    @Override
+    public void delete(WatchList list) {
+        watchRepo.delete(list);
+    }
     
 }
