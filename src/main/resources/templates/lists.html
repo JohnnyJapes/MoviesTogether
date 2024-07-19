@@ -198,6 +198,7 @@
     
 
 </body>
+<footer th:insert="~{footer :: footer}"></footer>
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"
 integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
@@ -291,7 +292,7 @@ integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="ano
             `
             <img class="img-fluid m-2" src="https://image.tmdb.org/t/p/w300/${path}" alt="">
             <h3>${title} (${year})</h3>
-            <h3>Director: ${director}</h3>
+            <h4>Director: ${director}</h3>
             <h4>Summary: </h4>
             <p>${description} (From TMDB)</p>
 
@@ -306,13 +307,6 @@ integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="ano
 $(document).ready(function () {
 
 
-    $("#details").on("click", function(event){
-        let element = $("#details");
-        let i = element.data("i");
-        event.preventDefault();
-        $("#details").empty();
-        displayDetails(i);
-    });
 
 
 
