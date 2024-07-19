@@ -306,30 +306,29 @@ integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="ano
 
 $(document).ready(function () {
 
-
-
-
-
-    function displayDetails1(iterator){
         let details = $("#details");
-        //document.getElementbyId("details");
         details.empty();
         let lists = /*[[${watchLists}]]*/ null;;
-        let path = lists[iterator].movies[0].movie.poster_path;
+        let movie = lists[0].movies[0].movie;
+        let path = movie.posterPath;
+        let title = movie.title;
+        let description = movie.description;
+        let year = movie.year;
+        let director = movie.director;
         details.append(
             `
-            <img class="img-fluid m-2" src="${path}" alt="">
-            <h3>Movie Title</h3>
-            <h3>Director: Person 1</h3>
+            <img class="img-fluid m-2" src="https://image.tmdb.org/t/p/w300/${path}" alt="">
+            <h3>${title} (${year})</h3>
+            <h4>Director: ${director}</h3>
             <h4>Summary: </h4>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magnam maxime dolore nostrum accusamus culpa! Enim numquam delectus itaque iste impedit esse cupiditate, dolore sunt laudantium cum fuga temporibus illum aspernatur!</p>
+            <p>${description} (From TMDB)</p>
 
             <input type="date" name="invite">
             <button class="btn btn-primary"> Create Invite</button>
         </div>
         `
         )
-    }
+
 
 
 
