@@ -36,7 +36,7 @@
 
 
 			  <span class=" d-flex">
-				<a class="btn btn-outline-success me-2" type="button" href="/login"> Log in / Sign up</a>
+				<a sec:authorize="isAnonymous()" class="btn btn-outline-success me-2" type="button" href="/login"> Log in / Sign up</a>
 				<span class="mx-5" sec:authorize="hasAnyRole('ADMIN', 'USER')">
 					<form action="#" th:action="@{/logout}" method="POST" class="row justify-content-center">
 						<input type="submit" class="btn btn-danger" value="Logout"></input>
@@ -61,9 +61,10 @@
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>
 			</div>
-			<div th:if="${#strings.equals(param.success, 'order')}" class="col">
-				<div class="alert alert-success  alert-dismissible" >
-					Order Placed
+			<div th:if="${alert}" class="col">
+	
+				<div class="alert alert-success alert-dismissible fade show"  role="alert">
+					<span th:text="${alert.message}"></span>
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>
 			</div>
