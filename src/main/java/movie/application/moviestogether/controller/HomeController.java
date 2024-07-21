@@ -17,6 +17,8 @@ import jakarta.validation.Valid;
 import movie.application.moviestogether.entity.User;
 import movie.application.moviestogether.entity.WatchList;
 import movie.application.moviestogether.service.UserService;
+import movie.application.moviestogether.validation.UpdateUserValidation;
+import movie.application.moviestogether.validation.UserValidation;
 import movie.application.moviestogether.validation.WatchListValidation;
 
 
@@ -41,12 +43,6 @@ public class HomeController {
         return "home";
     }
 
-
-    @GetMapping("/register")
-    public String getRegisterPage() {
-        return "register";
-    }
-
     @GetMapping("/login")
     public String getLoginPage() {
         return "login";
@@ -58,8 +54,53 @@ public class HomeController {
     }
 
     @GetMapping("/user")
-    public String getUserPage() {
+    public String getUserPage(Authentication authentication, Model theModel) {
+
+        String username = authentication.getName();
+		System.out.println("username: " +username);
+		User user = userService.findByUserName(username);
+
+        theModel.addAttribute("user", user);
+
+
+
         return "user";
+    }
+    @PostMapping("/user/update")
+    public String updateUser(@Valid @ModelAttribute("user") UpdateUserValidation data,
+    BindingResult theBindingResult,Authentication authentication, Model theModel) {
+
+        String username = authentication.getName();
+		System.out.println("username: " +username);
+		User user = userService.findByUserName(username);
+
+
+        // form validation
+		 if (theBindingResult.hasErrors()){
+            System.out.println("Errors: "+theBindingResult.getErrorCount());
+            System.out.println(theBindingResult.getAllErrors());
+            return "user";
+        }
+
+
+        User existing = userService.findByUserName(data.getUserName());
+        if (existing != null){
+        	theModel.addAttribute("userCheck", new UserValidation());
+			theModel.addAttribute("registrationError", "User name already exists.");
+
+			//logger.warning("User name already exists.");
+        	return "user";
+        }
+        user.setUserName(data.getUserName());
+        user.setFirstName(data.getFirstName());
+        user.setLastName(data.getLastName());
+        userService.update(user);
+
+        theModel.addAttribute("user", user);
+
+        
+
+        return "redirect:/logout";
     }
     
 }

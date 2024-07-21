@@ -13,15 +13,15 @@ public class UserValidation {
 	private String lastName;
 
     @NotNull(message = "is required")
-	@Size(min = 5, message = "is required")
+	@Size(min = 5, message = "must be at least 5 characters")
 	private String userName;
 	
 	@NotNull(message = "is required")
-	@Size(min = 5, message = "is required")
+	@Size(min = 5, message = "must be at least 5 characters")
 	private String email;
 	
 	@NotNull(message = "is required")
-	@Size(min = 1, message = "is required")
+	@Size(min = 3, message = "must be at least 3 characters")
 	private String password;
 
 	public UserValidation() {}

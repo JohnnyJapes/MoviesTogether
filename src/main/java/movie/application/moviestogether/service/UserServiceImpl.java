@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService{
 		user.setPassword(passwordEncoder.encode(data.getPassword()));
 		user.setEnabled(true);
 		
-		// give user default role of "employee"
+		// give user default role of "user"
 		user.setRoles(Arrays.asList(rRepo.findRoleByName("ROLE_USER")));
 
 		// save user in the database
@@ -100,6 +100,11 @@ public class UserServiceImpl implements UserService{
 			System.out.println("Did not find username - " +userName);
 			return result;
 		}
+	}
+	@Override
+	public void update(User user){
+
+		uRepo.save(user);
 	}
     
 }
