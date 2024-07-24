@@ -173,8 +173,12 @@
             <h4>Summary: </h4>
             <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magnam maxime dolore nostrum accusamus culpa! Enim numquam delectus itaque iste impedit esse cupiditate, dolore sunt laudantium cum fuga temporibus illum aspernatur!</p>
 
-            <input type="date" name="invite">
-            <button class="btn btn-primary"> Create Invite</button>
+            <form action="POST">
+                <input type="date" name="invite">
+                <button class="btn btn-primary"> Create Invite</button>
+
+            </form>
+
         </div>
 
     </div>
@@ -269,10 +273,13 @@ integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="ano
         details.empty();
         let lists = /*[[${watchLists}]]*/ null;;
         let list;
-        console.log(listId)
+        console.log("list id : " +listId)
         for (let index = 0; index < lists.length; index++) {
             console.log(lists[index].id)
-            if(listId == lists[index].id) list = lists[index];
+            if(listId == lists[index].id) {
+                list = lists[index]
+                break;
+            };
             
         }
         //console.log(list)
@@ -290,8 +297,12 @@ integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="ano
             <h4>Summary: </h4>
             <p>${description} (From TMDB)</p>
 
-            <input type="date" name="invite">
-            <button class="btn btn-primary"> Create Invite</button>
+            <form method="POST" action="/event/create" modelAttribute="EventBase">
+                <input type="hidden" value="${list.id}" name="listId" id="listId">
+                <input type="hidden" value="${itemRank}" name="rank" id="rank">
+                <input type="date" name="date" id="date">
+                <button class="btn btn-primary" type="submit"> Create Invite</button>
+            </form>
         </div>
         `
         )
@@ -317,8 +328,12 @@ $(document).ready(function () {
             <h4>Summary: </h4>
             <p>${description} (From TMDB)</p>
 
-            <input type="date" name="invite">
-            <button class="btn btn-primary"> Create Invite</button>
+            <form method="POST" action="/event/create" modelAttribute="EventBase">
+                <input type="hidden" value="${lists[0].id}" name="listId" id="listId">
+                <input type="hidden" value="${lists[0].movies[0].rank}" name="rank" id="rank">
+                <input type="date" name="date" id="date">
+                <button class="btn btn-primary" type="submit"> Create Invite</button>
+            </form>
         </div>
         `
         )

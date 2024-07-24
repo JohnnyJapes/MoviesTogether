@@ -70,6 +70,7 @@ public class ListController {
 
         // form validation
 		 if (bindingResult.hasErrors()){
+            theModel.addAttribute("alert", new Alert("Failed to Create new List: " + listValidation.getName()));
 			 return "Invalid Input";
 		 }
 
