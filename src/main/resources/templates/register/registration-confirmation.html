@@ -13,14 +13,14 @@
 
 	<!-- display first name, last name and email -->
 	<ul>
-		<li th:text="'User name: ' + ${customerCheck.email}"></li>
-		<li th:text="'First name: ' + ${customerCheck.firstName}"></li>
-		<li th:text="'Last name: ' + ${customerCheck.lastName}"></li>
+		<li th:text="'User name: ' + ${userCheck.userName}"></li>
+		<li th:text="'First name: ' + ${userCheck.firstName}"></li>
+		<li th:text="'Last name: ' + ${userCheck.lastName}"></li>
 	</ul>
 
 	<hr>
 	
-	<a th:href="@{/home}">Login with new user name</a>
+	<a th:href="@{/login}">Login with new user name</a>
 	
 </body>
 <footer th:insert="~{footer :: footer}"></footer>
