@@ -33,10 +33,11 @@
     <div class="container">
         <h3 class="my-3">Add new Movies</h3>
     <div class="">
-        <form class="mb-2" role="search" id="searchForm">
+       
             <input class="form-control mb-2 col-5" type="search" id="searchBox" placeholder="Search" aria-label="Search">
-            <button type="submit" id="searchButton" class="btn btn-primary col-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Search</button>
-        </form>
+            <button type="button" id="searchButton" class="btn btn-primary col-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Search</button>
+            <!--  -->
+
     </div>
 
 
@@ -93,10 +94,10 @@
         <div class="col-7">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 
-                <li class="nav-item" role="presentation">
+                <li class="nav-item" role="presentation" th:if="${not #lists.isEmpty(watchLists)}">
                   <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" 
                   th:attr="data-bs-target='#List'+${watchLists[0].id}" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true"
-                  th:text="${watchLists[0].name}">List 1</button>
+                  th:text="${watchLists[0].name}" th:if="${watchLists}">List 1</button>
                 </li>
                 <li class="nav-item" role="presentation" th:each="watchList, wStat : ${watchLists}" th:if="${wStat.count} &gt; 1">
                     <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" 
@@ -115,8 +116,8 @@
                     >Create List</button>
                 </li>
             </ul>
-            <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" 
+            <div class="tab-content" id="myTabContent" >
+                <div class="tab-pane fade show active" th:if="${not #lists.isEmpty(watchLists)}" 
                 id="home-tab-pane" th:id="'List'+${watchLists[0].id}" role="tabpanel" aria-labelledby="home-tab" 
                 tabindex="0" >
                     <row class="row g-3">
@@ -198,9 +199,70 @@
 </body>
 <footer th:insert="~{footer :: footer}"></footer>
 
+
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"
 integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 <script th:inline="javascript">
+        const searchButton = document.getElementById("staticBackdrop");
+        searchButton.addEventListener("show.bs.modal", function(event){
+            console.log("TEST")
+            //const modal = new Modal(document.getElementById("staticBackdrop"), {keyboard:true});
+            //searchButton.toggle();
+            //event.preventDefault();
+            title = $("#searchBox").val()
+            $("#searchModalBody").empty();
+            getSearchResults(title);
+            })
+
+    // $("#searchButton").on("click", function(event){
+    //     event.preventDefault();
+    //     title = $("#searchBox").val()
+    //     $("#searchModalBody").empty();
+    //     getSearchResults(title);
+    // });
+
+
+
+   // $("#total").text(`${total}`)
+    function getSearchResults(title) {
+        
+        let i = 0;
+        let listId = $(".tab-pane.active")[0].id.split("t")[1];
+
+        console.log(`localhost:8080/api/tmdb/search/${title}`) //call to get search results eventually once API is implemented
+        $.getJSON(`http://localhost:8080/api/tmdb/search/${title}`, function (data, status) {
+            //alert("Data: " + JSON.stringify(data) + "\nStatus: " + status);
+            console.log("start movie fetch ajax")
+            console.log(data)
+            // append to search modal which will display results and let user select what movie to add
+            //this will need to be looped for each result returned, limit to 10 results
+            for (let index = 0; index < data.results.length && index <= 6; index++) {
+                $("#searchModalBody").append(`
+                <tr class="pb-3">
+                        <th scope="row ">
+                            <row class="row ">
+                                <div class="row">
+                                    <p class="fs-5" style="">${data.results[index].title} (${data.results[index].release_date.substring(0,4)})</p>
+                                    <p class="fw-normal fs-6">${data.results[index].overview.substring(0,100) + "..."}</p>
+                                </div>
+                                <button type="button" class="btn btn-primary" onClick="addToList(${data.results[index].id}, ${listId})">Add Movie to List</button>
+                            </row>
+                        </th>
+                </tr>
+                `) 
+            }
+ 
+        }).fail(function (request, status,error) {
+            console.log(request)
+            console.log(status)
+            console.log(error)
+            console.log("AJAX Search FAIL")
+
+        });
+
+            
+
+    }
 
     function addToList(tmdbID, listId){
             console.log("Tried to add")
@@ -313,7 +375,7 @@ $(document).ready(function () {
 
         let details = $("#details");
         details.empty();
-        let lists = /*[[${watchLists}]]*/ null;;
+        let lists = /*[[${watchLists}]]*/ null;
         let movie = lists[0].movies[0].movie;
         let path = movie.posterPath;
         let title = movie.title;
@@ -341,55 +403,9 @@ $(document).ready(function () {
 
 
 
-    $("#searchForm").on("submit", function(event){
-        event.preventDefault();
-        title = $("#searchBox").val()
-        $("#searchModalBody").empty();
-        getSearchResults(title);
-    });
 
 
 
-   // $("#total").text(`${total}`)
-    function getSearchResults(title) {
-        
-        let i = 0;
-        let listId = $(".tab-pane.active")[0].id.split("t")[1];
-
-        console.log(`localhost:8080/api/tmdb/search/${title}`) //call to get search results eventually once API is implemented
-        $.getJSON(`http://localhost:8080/api/tmdb/search/${title}`, function (data, status) {
-            //alert("Data: " + JSON.stringify(data) + "\nStatus: " + status);
-            console.log("start movie fetch ajax")
-            console.log(data)
-            // append to search modal which will display results and let user select what movie to add
-            //this will need to be looped for each result returned, limit to 10 results
-            for (let index = 0; index < data.results.length && index <= 6; index++) {
-                $("#searchModalBody").append(`
-                <tr class="pb-3">
-                        <th scope="row ">
-                            <row class="row ">
-                                <div class="row">
-                                    <p class="fs-5" style="">${data.results[index].title} (${data.results[index].release_date.substring(0,4)})</p>
-                                    <p class="fw-normal fs-6">${data.results[index].overview.substring(0,100) + "..."}</p>
-                                </div>
-                                <button type="button" class="btn btn-primary" onClick="addToList(${data.results[index].id}, ${listId})">Add Movie to List</button>
-                            </row>
-                        </th>
-                </tr>
-                `) 
-            }
- 
-        }).fail(function (request, status,error) {
-            console.log(request)
-            console.log(status)
-            console.log(error)
-            console.log("AJAX Search FAIL")
-
-        });
-
-            
-
-    }
 
 
 

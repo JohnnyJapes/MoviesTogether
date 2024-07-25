@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
 import movie.application.moviestogether.dao.ListItemRepository;
@@ -46,7 +47,7 @@ public class ListController {
 
 
     @GetMapping("")
-    public String getListPage(Authentication authentication, Model theModel) {
+    public String getListPage(Authentication authentication, Model theModel, RedirectAttributes redirectAttributes) {
 
         String username = authentication.getName();
 		System.out.println("username: " +username);
@@ -55,6 +56,13 @@ public class ListController {
 		
 		theModel.addAttribute("name", user.getFirstName());
 		List<WatchList> lists = user.getWatchLists();
+        if (lists.size() <=0){
+
+        }
+
+        if (redirectAttributes.containsAttribute("alert")){
+            theModel.addAttribute("alert", redirectAttributes.getAttribute("alert"));
+        }
 		
 		theModel.addAttribute("watchLists", lists);
         theModel.addAttribute("newWatchList", new WatchListValidation());
@@ -65,7 +73,7 @@ public class ListController {
     @PostMapping("/create")
     public String createWatchList(@Valid @ModelAttribute("newWatchList") WatchListValidation listValidation
             ,BindingResult bindingResult,
-            Model theModel, Authentication authentication) 
+            Model theModel, Authentication authentication, RedirectAttributes redirectAttributes) 
         {
 
         // form validation
@@ -81,10 +89,12 @@ public class ListController {
         watchList.setName(listValidation.getName());
         watchListService.save(watchList);
 
+        redirectAttributes.addFlashAttribute("alert", new Alert("Created new List: " + listValidation.getName()));
+
         theModel.addAttribute("alert", new Alert("Created new List: " + listValidation.getName()));
 
         
-        return getListPage(authentication, theModel);
+        return "redirect:/lists";
     }
     
 }
