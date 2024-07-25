@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import movie.application.moviestogether.dao.ListItemRepository;
@@ -15,10 +16,13 @@ import movie.application.moviestogether.entity.ListItem;
 import movie.application.moviestogether.entity.Movie;
 import movie.application.moviestogether.entity.User;
 import movie.application.moviestogether.entity.WatchList;
+import movie.application.moviestogether.model.Alert;
 import movie.application.moviestogether.model.EventBase;
 import movie.application.moviestogether.service.EventService;
+import movie.application.moviestogether.service.MovieService;
 import movie.application.moviestogether.service.UserService;
 import movie.application.moviestogether.service.WatchListService;
+import movie.application.moviestogether.validation.EventValidation;
 import movie.application.moviestogether.validation.WatchListValidation;
 
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,6 +30,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import jakarta.validation.Valid;
 
 
 
@@ -35,40 +42,97 @@ public class EventController {
 
     private EventService eventService;
     private WatchListService watchListService;
+    private MovieService movieService;
     private UserService userService;
 
 
 
     @Autowired
 
-    public EventController(EventService eventService, WatchListService watchListService, UserService userService) {
+
+    public EventController(EventService eventService, WatchListService watchListService, MovieService movieService, UserService userService) {
         this.eventService = eventService;
         this.watchListService = watchListService;
+        this.movieService = movieService;
         this.userService = userService;
     }
+
+
+        // //create from the watchlist page
+        // @GetMapping("/newEvent")
+        // public String getEventForm(Model model, Authentication authentication, RedirectAttributes redirectAttributes) {
+            
+            
+        //     EventValidation data = (EventValidation) redirectAttributes.getAttribute("eventValidation");
+
+        //     System.out.println(data);
+        //     WatchList watchList = watchListService.findById(data.getListId());
+        //     List<ListItem> listItems =  watchList.getMovies();
+        //     ListItem selectedItem = listItems.get(data.getRank() - 1);
+    
+        //     model.addAttribute("selectedItem", selectedItem);
+        //     model.addAttribute("watchList", watchList);
+    
+        //     EventValidation newEvent = new EventValidation();
+    
+        //     newEvent.setEvent_datetime(data.getDate());
+    
+        //     newEvent.setMovieId(selectedItem.getMovie().getId());
+    
+        //     model.addAttribute("event", newEvent);
+    
+    
+        //     return "events/eventForm";
+        // }
+    
 
 
 
     //create from the watchlist page
     @PostMapping("/newEvent")
-    public String createEventForm(@ModelAttribute("event") EventBase data, Model model, Authentication authentication) {
+    public String createEventForm(@ModelAttribute("event") EventBase data, Model model, Authentication authentication
+        , RedirectAttributes redirectAttributes) {
         
+        if(redirectAttributes.containsAttribute("eventValidation")){
+
+            EventValidation tempEvent = (EventValidation) redirectAttributes.getAttribute("eventValidation");
+            data.setListId(tempEvent.getWatchListId());
+            data.setDate(tempEvent.getEvent_datetime());
+        }
         
+
         System.out.println(data);
         WatchList watchList = watchListService.findById(data.getListId());
         List<ListItem> listItems =  watchList.getMovies();
+
+        if(redirectAttributes.containsAttribute("eventValidation")){
+
+            EventValidation tempEvent = (EventValidation) redirectAttributes.getAttribute("eventValidation");
+            for (int i = 0; i < listItems.size(); i++) {
+                if (listItems.get(i).getMovie().getId() == tempEvent.getMovieId()) {
+                    data.setRank(listItems.get(i).getRank());
+                    break;
+                }
+            }
+        }
+
         ListItem selectedItem = listItems.get(data.getRank() - 1);
 
         model.addAttribute("selectedItem", selectedItem);
         model.addAttribute("watchList", watchList);
 
-        Event newEvent = new Event();
+        EventValidation newEvent = new EventValidation();
 
         newEvent.setEvent_datetime(data.getDate());
 
-        newEvent.setMovie(selectedItem.getMovie());
+        newEvent.setMovieId(selectedItem.getMovie().getId());
 
         model.addAttribute("event", newEvent);
+
+        if(redirectAttributes.containsAttribute("alert")){
+            model.addAttribute("alert", redirectAttributes.getAttribute("alert"));
+
+        }
 
 
         return "events/eventForm";
@@ -76,16 +140,31 @@ public class EventController {
 
     //create the event
     @PostMapping("/create")
-    public String createEvent(@ModelAttribute("event") Event data, Model model, Authentication authentication) {
+    public String createEvent(@Valid @ModelAttribute("event") EventValidation data,
+     BindingResult bindingResult, Model model, Authentication authentication, RedirectAttributes redirectAttributes) {
         
         
         String username = authentication.getName();
         System.out.println("username: " +username);
         User user = userService.findByUserName(username);
 
+        // form validation
+		 if (bindingResult.hasErrors()){
+            System.out.println("Validation Errors");
+            redirectAttributes.addAttribute("alert", new Alert("Failed to create event. "));
+            redirectAttributes.addAttribute("eventValidation", data);
+			return "redirect:event/newEvent";
+		 }
         Event event = new Event();
 
-        eventService.save(data);
+        event.setLocation(data.getLocation());
+        event.setDescription(data.getDescription());
+        event.setEvent_datetime(data.getEvent_datetime());
+        Movie movie = movieService.findById(data.getMovieId());
+        event.setTitle(data.getTitle());
+        event.setMovie(movie);
+
+        eventService.save(event);
 
 
         return "redirect:/event/list";
@@ -101,7 +180,7 @@ public class EventController {
 
         List<EventJoinUser> events = user.getEvents();
 
-        
+
 
         model.addAttribute("events", events);
         return "events/eventList";

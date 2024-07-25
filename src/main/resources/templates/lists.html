@@ -362,7 +362,7 @@ integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="ano
             <form method="POST" action="/event/newEvent" modelAttribute="EventBase">
                 <input type="hidden" value="${list.id}" name="listId" id="listId">
                 <input type="hidden" value="${itemRank}" name="rank" id="rank">
-                <input type="date" name="date" id="date">
+                <input type="datetime-local" name="date" id="date">
                 <button class="btn btn-primary" type="submit"> Create Invite</button>
             </form>
         </div>
@@ -393,7 +393,7 @@ $(document).ready(function () {
             <form method="POST" action="/event/newEvent" modelAttribute="EventBase">
                 <input type="hidden" value="${lists[0].id}" name="listId" id="listId">
                 <input type="hidden" value="${lists[0].movies[0].rank}" name="rank" id="rank">
-                <input type="date" name="date" id="date">
+                <input type="datetime-local" name="date" id="date">
                 <button class="btn btn-primary" type="submit"> Create Invite</button>
             </form>
         </div>

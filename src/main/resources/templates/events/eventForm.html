@@ -33,10 +33,11 @@
     <div class="container">
 		<h3 class="mt-3">New Event:</h3>
 		<div class="row justify-content-center">
-			<form class="mt-1" action="POST" method="POST" th:action="@{/event/create}" th:object="${event}">
+			<form class="mt-1 needs-validation" action="POST" method="POST" th:action="@{/event/create}" th:object="${event}">
 
+				<input type="hidden" th:field="*{watchListId}" th:value="${watchList.id}">
 				<div class="form-floating">
-					<select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+					<select class="form-select" th:field="*{movieId}" id="floatingSelect" aria-label="Floating label select example" required>
 					  <option selected th:value="${selectedItem.movie.id}" th:if="${selectedItem}"
 					   th:text="|${selectedItem.rank}.${selectedItem.movie.title} (${selectedItem.movie.year})|">Open this select menu</option>
 
@@ -49,17 +50,17 @@
 				</div>
 
 				<div class="form-floating mb-3">
-					<input type="text" class="form-control" id="titleInput" placeholder="Event Title">
+					<input type="text" th:field="*{title}" class="form-control" id="titleInput" placeholder="Event Title" required>
 					<label for="titleInput">Event Title</label>
 				</div>
 				<div class="form-floating mb-3">
-					<input type="text" th:field="*{location}" class="form-control" id="locationInput" placeholder="Location">
+					<input type="text" th:field="*{location}" class="form-control" id="locationInput" placeholder="Location" required>
 					<label for="locationInput">Location</label>
 				</div>
 
 				<div class="">
 				<label class="form-label" for="eventDate">Date:</label>
-				<input type="date" th:field="*{event_datetime}" class="form-control mb-3" id="eventDate">
+				<input type="datetime-local" th:field="*{event_datetime}" class="form-control mb-3" id="eventDate" required>
 
 				</div>
 				<div class="form-floating mb-3">

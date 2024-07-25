@@ -23,6 +23,9 @@ public class Event {
     @Column(name = "id")
     private int id;
 
+    @Column(name="title")
+    private String title;
+
 
     @Column(name = "event_datetime")
     private String event_datetime;
@@ -47,8 +50,9 @@ public class Event {
     }
 
 
-    public Event(int id, String event_datetime, Movie movie, String location, String description, List<EventJoinUser> invitedUsers) {
+    public Event(int id, String title, String event_datetime, Movie movie, String location, String description, List<EventJoinUser> invitedUsers) {
         this.id = id;
+        this.title = title;
         this.event_datetime = event_datetime;
         this.movie = movie;
         this.location = location;
@@ -104,6 +108,14 @@ public class Event {
 
     public void setInvitedUsers(List<EventJoinUser> invitedUsers) {
         this.invitedUsers = invitedUsers;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     
