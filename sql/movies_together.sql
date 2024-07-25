@@ -140,6 +140,7 @@ drop table if exists movie_event;
 create table movie_event(
 
 	id int primary key auto_increment,
+    tile varchar(250),
     event_datetime datetime not null,
     movie_id int,
     location varchar(255),
