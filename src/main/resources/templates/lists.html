@@ -359,7 +359,7 @@ integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="ano
             <h4>Summary: </h4>
             <p>${description} (From TMDB)</p>
 
-            <form method="POST" action="/event/create" modelAttribute="EventBase">
+            <form method="POST" action="/event/newEvent" modelAttribute="EventBase">
                 <input type="hidden" value="${list.id}" name="listId" id="listId">
                 <input type="hidden" value="${itemRank}" name="rank" id="rank">
                 <input type="date" name="date" id="date">
@@ -390,7 +390,7 @@ $(document).ready(function () {
             <h4>Summary: </h4>
             <p>${description} (From TMDB)</p>
 
-            <form method="POST" action="/event/create" modelAttribute="EventBase">
+            <form method="POST" action="/event/newEvent" modelAttribute="EventBase">
                 <input type="hidden" value="${lists[0].id}" name="listId" id="listId">
                 <input type="hidden" value="${lists[0].movies[0].rank}" name="rank" id="rank">
                 <input type="date" name="date" id="date">

@@ -50,7 +50,7 @@ public class EventController {
 
 
     //create from the watchlist page
-    @PostMapping("/create")
+    @PostMapping("/newEvent")
     public String createEventForm(@ModelAttribute("event") EventBase data, Model model, Authentication authentication) {
         
         
@@ -74,6 +74,25 @@ public class EventController {
         return "events/eventForm";
     }
 
+    //create the event
+    @PostMapping("/create")
+    public String createEvent(@ModelAttribute("event") Event data, Model model, Authentication authentication) {
+        
+        
+        String username = authentication.getName();
+        System.out.println("username: " +username);
+        User user = userService.findByUserName(username);
+
+        Event event = new Event();
+
+        eventService.save(data);
+
+
+        return "redirect:/event/list";
+    }
+
+
+    //Webpage to list all of a user's events
     @GetMapping("/list")
     public String getEventsPage(Model model, Authentication authentication) {
         String username = authentication.getName();
@@ -82,9 +101,24 @@ public class EventController {
 
         List<EventJoinUser> events = user.getEvents();
 
+        
+
         model.addAttribute("events", events);
-        return new String();
+        return "events/eventList";
     }
+
+        //Webpage to list all invites
+        @GetMapping("/invites")
+        public String getInvitesPage(Model model, Authentication authentication) {
+            String username = authentication.getName();
+            System.out.println("username: " +username);
+            User user = userService.findByUserName(username);
+    
+            List<EventJoinUser> events = user.getEvents();
+    
+            model.addAttribute("events", events);
+            return "events/eventList";
+        }
     
     
 }
