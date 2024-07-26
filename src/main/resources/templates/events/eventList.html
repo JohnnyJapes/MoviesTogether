@@ -33,18 +33,25 @@
 	<div class="container">
 		<div class="row">
 			<div class="list-group col-4">
-				<button type="button" class="list-group-item list-group-item-action active" aria-current="true">
+				<button type="button" class="list-group-item list-group-item-action active" data-bs-toggle="list" aria-current="true">
 				  The current button
 				</button>
-				<button type="button" class="list-group-item list-group-item-action" th:each="event : ${events}" 
-					th:if="${event.status.id == 2}" >
-				<span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
-				<br>
-				<span th:text="|Date: ${event.event.event_datetime}|"></span>
-				<br>
-				<span th:text="|Movie: ${event.event.movie.title}|"> </span>
-				</button>
-			  </div>
+				<a type="button" class="list-group-item list-group-item-action" th:each="event, eStat : ${events}" 
+					th:if="${event.status.id == 2}" th:id="|eventButton${eStat.count}|" th:href="|#eventDetails${eStat.count}|" data-bs-toggle="list" >
+                    <span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
+                    <br>
+                    <span th:text="|Date: ${event.event.event_datetime}|"></span>
+                    <br>
+                    <span th:text="|Movie: ${event.event.movie.title}|"> </span>
+                </a>
+			</div>
+            <div class="col-8 tab-content" id="eventDetails">
+                <div class="tab-pane fade" th:each="event, eStat : ${events}" th:id="|eventDetails${eStat.count}|">
+                    <span th:text="${event.event.title}"></span>
+                </div>
+            
+            
+            </div>
 
 		</div>
 
@@ -57,3 +64,34 @@
 </body>
 
 <footer th:insert="~{footer :: footer}"></footer>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"
+integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script th:inline="javascript">
+
+
+$(document).ready(function () {
+
+
+    const listItems = $(".list-group-item");
+
+
+    listItems.forEach(element => {
+        element.addEventListener("click", function(event){
+
+            $(".list-group-item.active").removeClass("active")
+            // for (let i = 0; i < listItems.length; i++) {
+            //     listItems.get(i).remo
+                
+            // }
+        })
+        
+    });
+
+})
+
+
+</script>
