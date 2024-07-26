@@ -58,7 +58,7 @@
                       The current button
                     </button>
                     <a type="button" class="list-group-item list-group-item-action" th:each="event, eStat : ${userJoinEvents}" 
-                        th:if="${event.status.id == 2}" th:id="|eventButton${eStat.count}|" th:href="|#eventDetails${eStat.count}|" data-bs-toggle="list" >
+                        th:if="${event.status.id == 2}" th:id="|eventButton${eStat.count}|" th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list" >
                         <span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
                         <br>
                         <span th:text="|Date: ${event.event.event_datetime}|"></span>
@@ -66,37 +66,69 @@
                         <span th:text="|Movie: ${event.event.movie.title}|"> </span>
                     </a>
                 </div>
-                <div class="col-8 tab-content" id="eventDetails">
-                    <div class="tab-pane fade " th:each="event, eStat : ${events}" th:id="|eventDetails${eStat.count}|">
-                        <div class="row">
-                            <div class="col-6 border-start border-2">
-                                <span class="fs-2" th:text="${event.title}"></span>
-                                <br>
-                                <span class="fs-4" th:text="|Date: ${event.event_datetime}|"></span>
-                                <br>
-                                <span class="fs-4" th:text="|Movie: ${event.movie.title}|"> </span>
-                                <br>
-                                <span class="fs-4" th:text="|Users attending:|"></span>
-                                <ul>
-                                    <li th:each="user : ${event.invitedUsers}" th:text="|${user.user.firstName} ${user.user.lastName}|" th:if="${user.status.id == 2}" ></li>
-                                </ul>
-                            </div>
-                            <div class="col-6 border-start border-2">
-                                <img class="img-fluid m-2" th:src="|https://image.tmdb.org/t/p/w300/${event.movie.posterPath}|" alt="">
-                                <h4 th:text="|${event.movie.title} (${event.movie.year})|"></h4>
-                                <h4 th:text="|Director: ${event.movie.director}|"></h4>
-                                <h4>Summary: </h4>
-                                <p th:text="|${event.movie.description} (From TMDB)|"></p>
-                            </div>
-    
-                        </div>
-    
-    
-                    </div>
-                
-                
+            </div>
+            <div class="col-4 tab-pane fade" id="invited-tab-pane" aria-labelledby="invited-tab" tabindex="0">
+                <div class="list-group">
+                    <button type="button" class="list-group-item list-group-item-action active" data-bs-toggle="list" aria-current="true">
+                      The current button
+                    </button>
+                    <a type="button" class="list-group-item list-group-item-action" th:each="event, eStat : ${userJoinEvents}" 
+                        th:if="${event.status.id == 1}" th:id="|eventButton${eStat.count}|" th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list" >
+                        <span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
+                        <br>
+                        <span th:text="|Date: ${event.event.event_datetime}|"></span>
+                        <br>
+                        <span th:text="|Movie: ${event.event.movie.title}|"> </span>
+                    </a>
                 </div>
+            </div>
+            <div class="col-4 tab-pane fade" id="declined-tab-pane" aria-labelledby="declined-tab" tabindex="0">
+                <div class="list-group">
+                    <button type="button" class="list-group-item list-group-item-action active" data-bs-toggle="list" aria-current="true">
+                      The current button
+                    </button>
+                    <a type="button" class="list-group-item list-group-item-action" th:each="event, eStat : ${userJoinEvents}" 
+                        th:if="${event.status.id == 3}" th:id="|eventButton${eStat.count}|" th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list" >
+                        <span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
+                        <br>
+                        <span th:text="|Date: ${event.event.event_datetime}|"></span>
+                        <br>
+                        <span th:text="|Movie: ${event.event.movie.title}|"> </span>
+                    </a>
+                </div>
+            </div>
 
+
+
+            <div class="col-8 tab-content" id="eventDetails">
+                <div class="tab-pane fade " th:each="event, eStat : ${events}" th:id="|eventDetails${event.id}|">
+                    <div class="row">
+                        <div class="col-6 border-start border-2">
+                            <span class="fs-2" th:text="${event.title}"></span>
+                            <br>
+                            <span class="fs-4" th:text="|Date: ${event.event_datetime}|"></span>
+                            <br>
+                            <span class="fs-4" th:text="|Movie: ${event.movie.title}|"> </span>
+                            <br>
+                            <span class="fs-4" th:text="|Users attending:|"></span>
+                            <ul>
+                                <li th:each="user : ${event.invitedUsers}" th:text="|${user.user.firstName} ${user.user.lastName}|" th:if="${user.status.id == 2}" ></li>
+                            </ul>
+                        </div>
+                        <div class="col-6 border-start border-2">
+                            <img class="img-fluid m-2" th:src="|https://image.tmdb.org/t/p/w300/${event.movie.posterPath}|" alt="">
+                            <h4 th:text="|${event.movie.title} (${event.movie.year})|"></h4>
+                            <h4 th:text="|Director: ${event.movie.director}|"></h4>
+                            <h4>Summary: </h4>
+                            <p th:text="|${event.movie.description} (From TMDB)|"></p>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            
+            
             </div>
 
 
