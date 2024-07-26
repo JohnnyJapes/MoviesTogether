@@ -200,12 +200,16 @@ public class EventController {
 		System.out.println("username: " +username);
 		User user = userService.findByUserName(username);
 
-        List<EventJoinUser> events = user.getEvents();
     
+        List<EventJoinUser> userEvents = user.getEvents();
+        List<Event> events = new ArrayList<Event>();
+        for (EventJoinUser eventJoin : userEvents) {
+            events.add(eventJoin.getEvent());
+        }
 
-
-
+        model.addAttribute("userJoinEvents", userEvents);
         model.addAttribute("events", events);
+
         return "events/eventList";
     }
 
@@ -216,8 +220,13 @@ public class EventController {
             System.out.println("username: " +username);
             User user = userService.findByUserName(username);
     
-            List<EventJoinUser> events = user.getEvents();
+            List<EventJoinUser> userEvents = user.getEvents();
+            List<Event> events = new ArrayList<Event>();
+            for (EventJoinUser eventJoin : userEvents) {
+                events.add(eventJoin.getEvent());
+            }
     
+            model.addAttribute("userJoinEvents", userEvents);
             model.addAttribute("events", events);
             return "events/eventList";
         }
