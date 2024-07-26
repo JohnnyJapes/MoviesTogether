@@ -30,19 +30,12 @@
 
 	</div>
 
-    <div class="container text-center">
-        <h1>Home Page</h1>
-        <h2>Features:</h2>
-		<div class="row justify-content-md-center">
-			<ul class=" rowcol col-2">
-				<li>Watchlist</li>
-				<li>Invites</li>
-				<li>Scheduling</li>
-			</ul>
-		</div>
-
-        <a href="/login" class="btn btn-success">Log in / Sign Up</a>
-    </div>
+    <div class="list-group">
+        <button type="button" class="list-group-item list-group-item-action active" aria-current="true">
+          The current button
+        </button>
+        <button type="button" class="list-group-item list-group-item-action" th:each="event : ${events}" th:if="${event.status.id = 2}">A second button item</button>
+      </div>
 	
 
 </div>
