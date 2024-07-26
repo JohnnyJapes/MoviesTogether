@@ -169,7 +169,8 @@ drop table if exists user_event;
 
 create table user_event(
 
-	event_id int primary key,
+	id int primary key auto_increment,
+    event_id int,
     user_id int,
     status_id int,
     
