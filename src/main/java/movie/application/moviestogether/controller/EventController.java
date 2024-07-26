@@ -1,6 +1,7 @@
 package movie.application.moviestogether.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -9,11 +10,14 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import movie.application.moviestogether.dao.EventJoinUserRepository;
 import movie.application.moviestogether.dao.ListItemRepository;
+import movie.application.moviestogether.dao.StatusRepository;
 import movie.application.moviestogether.entity.Event;
 import movie.application.moviestogether.entity.EventJoinUser;
 import movie.application.moviestogether.entity.ListItem;
 import movie.application.moviestogether.entity.Movie;
+import movie.application.moviestogether.entity.Status;
 import movie.application.moviestogether.entity.User;
 import movie.application.moviestogether.entity.WatchList;
 import movie.application.moviestogether.model.Alert;
@@ -44,18 +48,23 @@ public class EventController {
     private WatchListService watchListService;
     private MovieService movieService;
     private UserService userService;
+    private EventJoinUserRepository eventJoinUserRepository;
+    private StatusRepository statusRepository;
 
 
 
     @Autowired
-
-
-    public EventController(EventService eventService, WatchListService watchListService, MovieService movieService, UserService userService) {
+    public EventController(EventService eventService, WatchListService watchListService, MovieService movieService, UserService userService, EventJoinUserRepository eventJoinUserRepository, StatusRepository statusRepository) {
         this.eventService = eventService;
         this.watchListService = watchListService;
         this.movieService = movieService;
         this.userService = userService;
+        this.eventJoinUserRepository = eventJoinUserRepository;
+        this.statusRepository = statusRepository;
     }
+
+
+
 
 
         // //create from the watchlist page
@@ -163,15 +172,28 @@ public class EventController {
         Movie movie = movieService.findById(data.getMovieId());
         event.setTitle(data.getTitle());
         event.setMovie(movie);
+        event.setOwner(user);
 
+
+        //create link to user
+        Optional<Status> result = statusRepository.findById(2);
+        Status attending = result.get();
+        EventJoinUser eventJoin = new EventJoinUser(event.getId(), user,  attending);
+
+        event.getInvitedUsers().add(eventJoin);
+        //save event to database
         eventService.save(event);
+        eventJoinUserRepository.save(eventJoin);
+
+        
+
 
 
         return "redirect:/event/list";
     }
 
 
-    //Webpage to list all of a user's events
+    //Webpage to list all events a user is attending
     @GetMapping("/list")
     public String getEventsPage(Model model, Authentication authentication) {
         String username = authentication.getName();
@@ -179,6 +201,7 @@ public class EventController {
 		User user = userService.findByUserName(username);
 
         List<EventJoinUser> events = user.getEvents();
+    
 
 
 

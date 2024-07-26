@@ -16,9 +16,8 @@ public class EventJoinUser {
 
 
     @Id
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    private Event event;
+    @Column(name = "event_id")
+    private int eventId;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -35,21 +34,24 @@ public class EventJoinUser {
 
 
 
-    public EventJoinUser(Event event, User user, Status status) {
-        this.event = event;
+
+    public EventJoinUser(int eventId, User user, Status status) {
+        this.eventId = eventId;
         this.user = user;
         this.status = status;
     }
 
 
 
-    public Event getEvent() {
-        return this.event;
+
+    public int getEventId() {
+        return this.eventId;
     }
 
-    public void setEvent(Event event) {
-        this.event = event;
+    public void setEventId(int eventId) {
+        this.eventId = eventId;
     }
+
 
     public User getUser() {
         return this.user;

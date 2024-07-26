@@ -26,6 +26,9 @@ public class Event {
     @Column(name="title")
     private String title;
 
+    @OneToOne
+    @JoinColumn(name = "owner_id", referencedColumnName = "user_id")
+    private User owner;
 
     @Column(name = "event_datetime")
     private String event_datetime;
@@ -50,15 +53,18 @@ public class Event {
     }
 
 
-    public Event(int id, String title, String event_datetime, Movie movie, String location, String description, List<EventJoinUser> invitedUsers) {
+
+    public Event(int id, String title, User owner, String event_datetime, Movie movie, String location, String description, List<EventJoinUser> invitedUsers) {
         this.id = id;
         this.title = title;
+        this.owner = owner;
         this.event_datetime = event_datetime;
         this.movie = movie;
         this.location = location;
         this.description = description;
         this.invitedUsers = invitedUsers;
     }
+
 
 
 
@@ -116,6 +122,15 @@ public class Event {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+
+    public User getOwner() {
+        return this.owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     
