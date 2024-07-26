@@ -140,13 +140,15 @@ drop table if exists movie_event;
 create table movie_event(
 
 	id int primary key auto_increment,
-    tile varchar(250),
+    owner_id int,
+    title varchar(250),
     event_datetime datetime not null,
     movie_id int,
     location varchar(255),
     description varchar(500),
     
-    foreign key(movie_id) references movies(id)
+    foreign key(movie_id) references movies(id),
+    foreign key(owner_id) references user(user_id)
 
 );
 
