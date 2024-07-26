@@ -4,6 +4,8 @@ import org.hibernate.annotations.DialectOverride.Formula;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -16,8 +18,13 @@ public class EventJoinUser {
 
 
     @Id
-    @Column(name = "event_id")
-    private int eventId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
+
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private Event event;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -32,26 +39,38 @@ public class EventJoinUser {
     public EventJoinUser() {
     }
 
-
-
-
-    public EventJoinUser(int eventId, User user, Status status) {
-        this.eventId = eventId;
+    public EventJoinUser(Event event, User user, Status status) {
+        this.event = event;
         this.user = user;
         this.status = status;
     }
 
 
 
-
-    public int getEventId() {
-        return this.eventId;
+    public EventJoinUser(int id, Event event, User user, Status status) {
+        this.id = id;
+        this.event = event;
+        this.user = user;
+        this.status = status;
     }
 
-    public void setEventId(int eventId) {
-        this.eventId = eventId;
+
+
+    public int getId() {
+        return this.id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Event getEvent() {
+        return this.event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
 
     public User getUser() {
         return this.user;
@@ -68,6 +87,7 @@ public class EventJoinUser {
     public void setStatus(Status status) {
         this.status = status;
     }
+
 
 
     

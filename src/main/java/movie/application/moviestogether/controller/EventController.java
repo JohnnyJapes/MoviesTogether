@@ -1,5 +1,6 @@
 package movie.application.moviestogether.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -173,22 +174,21 @@ public class EventController {
         event.setTitle(data.getTitle());
         event.setMovie(movie);
         event.setOwner(user);
-
+        //eventService.save(event);
 
         //create link to user
         Optional<Status> result = statusRepository.findById(2);
         Status attending = result.get();
-        EventJoinUser eventJoin = new EventJoinUser(event.getId(), user,  attending);
-
-        event.getInvitedUsers().add(eventJoin);
+        EventJoinUser eventJoin = new EventJoinUser(event, user,  attending);
+        List<EventJoinUser> test = new ArrayList<EventJoinUser>();
+        test.add(eventJoin);
+        event.setInvitedUsers(test);
+        System.out.println("users size: " + event.getInvitedUsers().size());
         //save event to database
-        eventService.save(event);
-        eventJoinUserRepository.save(eventJoin);
-
         
+        eventService.save(event);
 
-
-
+        //eventJoinUserRepository.save(eventJoin);
         return "redirect:/event/list";
     }
 
