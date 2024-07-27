@@ -23,6 +23,7 @@ import movie.application.moviestogether.entity.User;
 import movie.application.moviestogether.entity.WatchList;
 import movie.application.moviestogether.model.Alert;
 import movie.application.moviestogether.model.EventBase;
+import movie.application.moviestogether.service.EventJoinUserService;
 import movie.application.moviestogether.service.EventService;
 import movie.application.moviestogether.service.MovieService;
 import movie.application.moviestogether.service.UserService;
@@ -49,18 +50,20 @@ public class EventController {
     private WatchListService watchListService;
     private MovieService movieService;
     private UserService userService;
-    private EventJoinUserRepository eventJoinUserRepository;
+    private EventJoinUserService eventJoinUserService;
     private StatusRepository statusRepository;
 
 
 
     @Autowired
-    public EventController(EventService eventService, WatchListService watchListService, MovieService movieService, UserService userService, EventJoinUserRepository eventJoinUserRepository, StatusRepository statusRepository) {
+
+
+    public EventController(EventService eventService, WatchListService watchListService, MovieService movieService, UserService userService, EventJoinUserService eventJoinUserService, StatusRepository statusRepository) {
         this.eventService = eventService;
         this.watchListService = watchListService;
         this.movieService = movieService;
         this.userService = userService;
-        this.eventJoinUserRepository = eventJoinUserRepository;
+        this.eventJoinUserService = eventJoinUserService;
         this.statusRepository = statusRepository;
     }
 
@@ -202,6 +205,7 @@ public class EventController {
 
     
         List<EventJoinUser> userEvents = user.getEvents();
+        eventJoinUserService.sortEvents(userEvents);
         List<Event> events = new ArrayList<Event>();
         for (EventJoinUser eventJoin : userEvents) {
             events.add(eventJoin.getEvent());
