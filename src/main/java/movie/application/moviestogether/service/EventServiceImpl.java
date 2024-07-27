@@ -10,6 +10,7 @@ import movie.application.moviestogether.dao.EventRepository;
 import movie.application.moviestogether.dao.StatusRepository;
 import movie.application.moviestogether.entity.Event;
 import movie.application.moviestogether.entity.EventJoinUser;
+import movie.application.moviestogether.entity.Movie;
 import movie.application.moviestogether.entity.Status;
 import movie.application.moviestogether.entity.User;
 
@@ -63,4 +64,17 @@ public class EventServiceImpl implements EventService {
         return;
         //throw new UnsupportedOperationException("Unimplemented method 'inviteUser'");
     }
+
+
+
+    @Override
+    public Event findById(int id) {
+        
+        Event result = eventRepo.findById(id);
+		if (result != null) return  result;
+		else
+			throw new RuntimeException("Did not find Event with ID - " +id);
+	
+    }
+    
 }

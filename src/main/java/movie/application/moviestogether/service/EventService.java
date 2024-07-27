@@ -8,6 +8,7 @@ public interface EventService {
     void save(Event event);
     void delete(Event event);
     void inviteUser(Event event, User user);
+    Event findById(int id);
     
 
 }

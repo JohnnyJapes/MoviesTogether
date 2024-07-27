@@ -52,7 +52,8 @@ public class SecurityConfig {
                 //.requestMatchers("/*").permitAll()
                 .requestMatchers("/home").permitAll()
                 //.requestMatchers(HttpMethod.GET,"/api/tmdb/search/**").permitAll()
-
+                .requestMatchers("/api/user/**").permitAll()
+                .requestMatchers("/api/event/**").permitAll()
                 .requestMatchers("/**").authenticated())
                 .formLogin(form ->form.loginPage("/login")
                         .loginProcessingUrl("/authenticateTheUser")
