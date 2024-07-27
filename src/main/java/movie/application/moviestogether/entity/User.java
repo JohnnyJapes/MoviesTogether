@@ -3,6 +3,8 @@ package movie.application.moviestogether.entity;
 import java.util.Collection;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,24 +40,25 @@ public class User {
 	@Column(name="user_email")
 	private String email;
 	
-	
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)  
 	@Column(name = "password")
 	private String password;
 	
 	@Column(name= "enabled")
 	private Boolean enabled;
 
-    	//typical many to many, specify the join table used in the DB
+    //typical many to many, specify the join table used in the DB
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<Role> roles;
 
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)  
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<EventJoinUser> events;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)  
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private List<WatchList> watchLists;
