@@ -38,7 +38,7 @@
            
                 <input class="form-control mb-2 col-5" type="search" id="searchBox" placeholder="Search" aria-label="Search">
                 <button type="button" id="searchButton" class="btn btn-primary col-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Search</button>
-                <!--  -->
+                
     
         </div>
     
@@ -52,6 +52,7 @@
                     <h1 class="modal-title fs-5" id="staticBackdropLabel">Search Results</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <div id="modalAlert"></div>
                     <div class="modal-body" id="searchModalBody">
                     List of Movies
                     </div>
@@ -168,19 +169,7 @@
                 <div class="tab-pane fade" id="disabled-tab-pane" th:id="${watchList.name}" role="tabpanel" aria-labelledby="disabled-tab" tabindex="0">...</div> -->
                 </div>
             </div>
-            <div class="col-5" id="details">
-    
-                <img class="img-fluid m-2" src="https://placehold.co/300" alt="">
-                <h3>Movie Title</h3>
-                <h3>Director: Person 1</h3>
-                <h4>Summary: </h4>
-                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magnam maxime dolore nostrum accusamus culpa! Enim numquam delectus itaque iste impedit esse cupiditate, dolore sunt laudantium cum fuga temporibus illum aspernatur!</p>
-    
-                <form action="POST">
-                    <input type="date" name="invite">
-                    <button class="btn btn-primary"> Create Invite</button>
-    
-                </form>
+            <div class="col-5 border-start" id="details">
     
             </div>
     
@@ -281,6 +270,7 @@ integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="ano
                 console.log(status)
                 console.log(error)
                 console.log("AJAX add FAIL")
+                modalAlert("Failed to add Movie. Please Refresh the page and try again", "danger")
 
             });
 
@@ -351,17 +341,25 @@ integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="ano
         //console.log(list)
         let movie = list.movies[itemRank-1].movie;
         let path = movie.posterPath;
+        let providers;
+        
         let title = movie.title;
         let description = movie.description;
         let year = movie.year;
         let director = movie.director;
-        details.append(
+        $.getJSON(`http://localhost:8080/api/tmdb/watchProviders/${movie.id}`, (data, status)=>{
+
+            providers = data;
+            if(providers[0].type == "EMPTY"){
+                details.append(
             `
             <img class="img-fluid m-2" src="https://image.tmdb.org/t/p/w300/${path}" alt="">
             <h3>${title} (${year})</h3>
             <h4>Director: ${director}</h3>
             <h4>Summary: </h4>
             <p>${description} (From TMDB)</p>
+            <h4>Providers: None Found</h4>
+
 
             <form method="POST" action="/event/newEvent" modelAttribute="EventBase">
                 <input type="hidden" value="${list.id}" name="listId" id="listId">
@@ -370,47 +368,86 @@ integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="ano
                 <button class="btn btn-primary" type="submit"> Create Invite</button>
             </form>
         </div>
-        `
-        )
-    }
+        `)}
+        else{
+            let rent = [];
+            let buy = [];
+            providers.forEach(element => {
+                if(element.type == "rent")
+                    rent.push(element);
+                else buy.push(element);
+            });
+            let rentString ="";
+            let buyString = "";
+            rent.forEach(element => {
+                rentString += `<a href="${element.link}"><img class="ms-2" src="https://image.tmdb.org/t/p/original${element.logo_path}" width="50" height="50"
+                 title="element.provider_name"></a>`
+            });
 
+            buy.forEach(element => {
+                buyString += `<a href="${element.link}"><img class="ms-2" src="https://image.tmdb.org/t/p/original${element.logo_path}" width="50" height="50"
+                 title="element.provider_name"></a>`
+            });
 
-$(document).ready(function () {
-
-        let details = $("#details");
-        details.empty();
-        let lists = /*[[${watchLists}]]*/ null;
-        let movie = lists[0].movies[0].movie;
-        let path = movie.posterPath;
-        let title = movie.title;
-        let description = movie.description;
-        let year = movie.year;
-        let director = movie.director;
-        details.append(
+            console.log(providers)
+            details.append(
             `
             <img class="img-fluid m-2" src="https://image.tmdb.org/t/p/w300/${path}" alt="">
             <h3>${title} (${year})</h3>
             <h4>Director: ${director}</h3>
             <h4>Summary: </h4>
             <p>${description} (From TMDB)</p>
+            <h4>Providers (From <a href="https://www.justwatch.com">JustWatch</a>): </h4>
+            <h5>Rent:</h5>
+            ${rentString}
+            <h5>Buy:</h5>
+            ${buyString}
 
-            <form method="POST" action="/event/newEvent" modelAttribute="EventBase">
-                <input type="hidden" value="${lists[0].id}" name="listId" id="listId">
-                <input type="hidden" value="${lists[0].movies[0].rank}" name="rank" id="rank">
+            <form class="mt-3" method="POST" action="/event/newEvent" modelAttribute="EventBase">
+                <input type="hidden" value="${list.id}" name="listId" id="listId">
+                <input type="hidden" value="${itemRank}" name="rank" id="rank">
                 <input type="datetime-local" name="date" id="date">
                 <button class="btn btn-primary" type="submit"> Create Invite</button>
             </form>
         </div>
         `
         )
+        }
 
 
+            }).fail(function (request, status,error) {
+                console.log(request)
+                console.log(request.status)
+                console.log(request.statusText)
+                console.log("Fetch invited Users Failed")
+
+            });
+        
+    }
+
+    function getProviders(movieId){
 
 
+    }
 
+    document.getElementById("searchBox").addEventListener("keydown", event=>{
 
+        if(event.key == "Enter") document.getElementById("searchButton").click();
 
+    })
+    function modalAlert(message, type){
+	$("#modalAlert").empty();
+	$("#modalAlert").append(
+		`<div class="alert alert-${type} alert-dismissible fade show"  role="alert">
+			<span ">${message}</span>
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>`
+					);
+}
+$(document).ready(function () {
 
+        let details = $("#details");
+        details.empty();
 
 
 })

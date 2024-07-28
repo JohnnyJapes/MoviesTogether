@@ -56,8 +56,11 @@
 						<label for="titleInput">Event Title</label>
 					</div>
 					<div class="form-floating mb-3">
-						<input type="text" th:field="*{location}" class="form-control" id="locationInput" placeholder="Location" required>
+						<input type="text" th:field="*{location}" class="form-control" 
+						id="locationInput" placeholder="Location" required
+						data-bs-toggle="tooltip" data-bs-title="Watching together online? Try Teleparty!">
 						<label for="locationInput">Location</label>
+	
 					</div>
 
 					<div class="">
@@ -90,3 +93,10 @@
 </body>
 
 <footer th:insert="~{footer :: footer}"></footer>
+
+<script>
+	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+	const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+	const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+</script>
