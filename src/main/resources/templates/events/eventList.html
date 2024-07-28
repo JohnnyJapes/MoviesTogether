@@ -6,206 +6,210 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+	<link rel="stylesheet" th:href="@{/css/footerCSS.css}">
 </head>
 
 <header class="sticky-top" th:replace="~{header :: stick}"></header>
 
 <body>
-<!-- Check for login error -->
-	<div class="row justify-content-center">
-		<div th:if="${param.error}" class="col">
-			<div class="alert alert-danger  alert-dismissible">
-				Invalid username and password.
-				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-			</div>
-		</div>
-			<!--Check for logout-->
-		<div th:if="${param.logout}" class="col">
-	
-			<div class="alert alert-success alert-dismissible">
-				You have been logged out.
-				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-			</div>
-		</div>
-
-	</div>
-
-	<div class="container">
-        <h3>Events</h3>
-        <ul class="nav nav-tabs" id="eventTabs" role="tablist">
-
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="attending-tab" data-bs-toggle="tab" data-bs-target="#attending-tab-pane" 
-                 type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true"
-                >Attending</button>
-              </li>
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" id="invited-tab" data-bs-toggle="tab" data-bs-target="#invited-tab-pane" 
-                 type="button" role="tab" aria-controls="invited-tab-pane" aria-selected="true"
-                >Invited</button>
-              </li>
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" id="declined-tab" data-bs-toggle="tab" data-bs-target="#declined-tab-pane" 
-                 type="button" role="tab" aria-controls="declined-tab-pane" aria-selected="true"
-                >Declined</button>
-              </li>
-
-        </ul>
-		<div class="row mt-2 tab-content">
-            <div class="col-4 tab-pane fade show active" id="attending-tab-pane" aria-labelledby="attending-tab" tabindex="0">
-                <div class="list-group">
-                    <a type="button" class="list-group-item list-group-item-action" th:each="event, eStat : ${userJoinEvents}" 
-                        th:if="${event.status.id == 2}" th:id="|eventButton${eStat.count}|" th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list" >
-                        <span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
-                        <br>
-                        <span th:text="|Date: ${event.event.event_datetime}|"></span>
-                        <br>
-                        <span th:text="|Movie: ${event.event.movie.title}|"> </span>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 tab-pane fade" id="invited-tab-pane" aria-labelledby="invited-tab" tabindex="0">
-                <div class="list-group">
-
-                    <a type="button" class="list-group-item list-group-item-action details" th:each="event, eStat : ${userJoinEvents}" 
-                        th:if="${event.status.id == 1}" th:id="|eventButton${eStat.count}|" 
-						th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list"
-						th:attr="data-event-id=${event.event.id}">
-                        <span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
-                        <br>
-                        <span th:text="|Date: ${event.event.event_datetime}|"></span>
-                        <br>
-                        <span th:text="|Movie: ${event.event.movie.title}|"> </span>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 tab-pane fade" id="declined-tab-pane" aria-labelledby="declined-tab" tabindex="0">
-                <div class="list-group">
-
-                    <a type="button" class="list-group-item list-group-item-action" th:each="event, eStat : ${userJoinEvents}" 
-                        th:if="${event.status.id == 3}" th:id="|eventButton${eStat.count}|" th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list" >
-                        <span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
-                        <br>
-                        <span th:text="|Date: ${event.event.event_datetime}|"></span>
-                        <br>
-                        <span th:text="|Movie: ${event.event.movie.title}|"> </span>
-                    </a>
-                </div>
-            </div>
+	<div id="topDiv">
 
 
-
-            <div class="col-8 tab-content" id="eventDetails">
-                <div class="tab-pane fade " th:each="event, eStat : ${events}" th:attr="data-event-id=${event.id}" th:id="|eventDetails${event.id}|">
-                    <div class="row">
-                        <div class="col-6 border-start border-2">
-                            <span class="fs-2 fw-bold" th:text="${event.title}"></span>
-                            <br>
-                            <span class="fs-4" th:text="|Date: ${event.event_datetime}|"></span>
-                            <br>
-							<span class="fs-4" th:text="|Location: ${event.location}|"> </span>
-                            <br>
-                            <span class="fs-4" th:text="|Movie: ${event.movie.title}|"> </span>
-                            <br>
-							<span class="fs-4" th:text="|Description:|"> </span>
-                            <br>
-							<span class="fs-6" th:text="|${event.description}|"> </span>
-							<br>
-							<div class="row mt-2">
-
-								<div class="col-6">
-									
-									<span class="fs-4" th:text="|Users attending:|"></span>
-									<div class="row justify-content-center" th:id="|userList${event.id}|">
-										<div class="col-10 my-1 py-1 bg-primary-subtle rounded-pill" th:each="user : ${event.invitedUsers}" 
-										th:text="|${user.user.userName}: ${user.user.firstName} ${user.user.lastName}|" 
-										th:if="${user.status.id == 2}" ></div>
-									</div>    
-								</div>
-
-								<div class="col-6" th:if="${event.owner.id == currentUser.id}">
-
-									<span class="fs-4" th:text="|Users invited:|" th:if="${event.owner.id == currentUser.id}"></span>
-									<div class="row justify-content-center" th:id="|userInviteList${event.id}|">
-										<div class="col-10 my-1 py-1 bg-primary-subtle rounded-pill" th:each="user : ${event.invitedUsers}" 
-										th:text="|${user.user.userName}: ${user.user.firstName} ${user.user.lastName}|" 
-										th:if="${user.status.id == 1}" ></div>
-									</div>   
-								</div>
-
-							</div>
-   
-							<div class="row m-2 justify-content-around">
-								<!-- owner buttons -->
-								<button type="button" id="inviteMoreButton" th:attr="data-event-id=${event.id}" 
-								class="btn btn-primary col-5" data-bs-toggle="modal" 
-								data-bs-target="#inviteModal" th:if="${event.owner.id == currentUser.id}" >Invite More Users</button>
-								<button type="button" id="deleteEventButton" th:attr="data-event-id=${event.id}" 
-								class="btn btn-danger  col-5" th:if="${event.owner.id == currentUser.id}" >Delete Event</button>
-								<!-- normal buttons -->
-								<button type="button" id="acceptInviteButton" th:attr="data-event-id=${event.id}" 
-								class="btn btn-primary col-5" th:if="${userJoinEvents[eStat.count - 1].status.id == 1}" >Accept Invite</button>
-								<button type="button" id="declineInviteButton" th:attr="data-event-id=${event.id}" 
-								class="btn btn-danger col-5" th:if="${userJoinEvents[eStat.count - 1].status.id == 1}" >Decline Invite</button>
-								
-							</div>
-
-
-
-					
-						
-					
-					
-					
-
-                        </div>
-                        <div class="col-6 border-start border-2">
-                            <img class="img-fluid m-2" th:src="|https://image.tmdb.org/t/p/w300/${event.movie.posterPath}|" alt="">
-                            <h4 th:text="|${event.movie.title} (${event.movie.year})|"></h4>
-                            <h4 th:text="|Director: ${event.movie.director}|"></h4>
-                            <h4>Summary: </h4>
-                            <p th:text="|${event.movie.description} (From TMDB)|"></p>
-                        </div>
-
-                    </div>
-
-
-                </div>
-            
-            
-            </div>
-
-
-		</div>
-
-	</div>
-
-	<!-- Invite Modal -->
-	<div class="modal fade" id="inviteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-			<h1 class="modal-title fs-5" id="inviteModalLabel">Invite Users</h1>
-			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body" id="inviteModalBody">
-				<div id="modalAlert"></div>
-				<input class="form-control mb-2 col-5" type="text" id="inviteBox" placeholder="Enter 1 Username at a time" aria-label="Search">
-				<button class="btn btn-primary" id="addUserButton">+</button>
-				
-				<div id="modalContent" class="mt-2">
-
+		<!-- Check for login error -->
+		<div class="row justify-content-center">
+			<div th:if="${param.error}" class="col">
+				<div class="alert alert-danger  alert-dismissible">
+					Invalid username and password.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>
 			</div>
-			<div class="modal-footer">
-			<button type="button" class="btn btn-primary" id="inviteListButton" data-bs-dismiss="modal">Invite Listed Users</button>
-			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<!--Check for logout-->
+			<div th:if="${param.logout}" class="col">
+		
+				<div class="alert alert-success alert-dismissible">
+					You have been logged out.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="container">
+			<h3>Events</h3>
+			<ul class="nav nav-tabs" id="eventTabs" role="tablist">
+
+				<li class="nav-item" role="presentation">
+					<button class="nav-link active" id="attending-tab" data-bs-toggle="tab" data-bs-target="#attending-tab-pane" 
+					type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true"
+					>Attending</button>
+				</li>
+				<li class="nav-item" role="presentation">
+					<button class="nav-link" id="invited-tab" data-bs-toggle="tab" data-bs-target="#invited-tab-pane" 
+					type="button" role="tab" aria-controls="invited-tab-pane" aria-selected="true"
+					>Invited</button>
+				</li>
+				<li class="nav-item" role="presentation">
+					<button class="nav-link" id="declined-tab" data-bs-toggle="tab" data-bs-target="#declined-tab-pane" 
+					type="button" role="tab" aria-controls="declined-tab-pane" aria-selected="true"
+					>Declined</button>
+				</li>
+
+			</ul>
+			<div class="row mt-2 tab-content">
+				<div class="col-4 tab-pane fade show active" id="attending-tab-pane" aria-labelledby="attending-tab" tabindex="0">
+					<div class="list-group">
+						<a type="button" class="list-group-item list-group-item-action" th:each="event, eStat : ${userJoinEvents}" 
+							th:if="${event.status.id == 2}" th:id="|eventButton${eStat.count}|" th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list" >
+							<span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
+							<br>
+							<span th:text="|Date: ${event.event.event_datetime}|"></span>
+							<br>
+							<span th:text="|Movie: ${event.event.movie.title}|"> </span>
+						</a>
+					</div>
+				</div>
+				<div class="col-4 tab-pane fade" id="invited-tab-pane" aria-labelledby="invited-tab" tabindex="0">
+					<div class="list-group">
+
+						<a type="button" class="list-group-item list-group-item-action details" th:each="event, eStat : ${userJoinEvents}" 
+							th:if="${event.status.id == 1}" th:id="|eventButton${eStat.count}|" 
+							th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list"
+							th:attr="data-event-id=${event.event.id}">
+							<span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
+							<br>
+							<span th:text="|Date: ${event.event.event_datetime}|"></span>
+							<br>
+							<span th:text="|Movie: ${event.event.movie.title}|"> </span>
+						</a>
+					</div>
+				</div>
+				<div class="col-4 tab-pane fade" id="declined-tab-pane" aria-labelledby="declined-tab" tabindex="0">
+					<div class="list-group">
+
+						<a type="button" class="list-group-item list-group-item-action" th:each="event, eStat : ${userJoinEvents}" 
+							th:if="${event.status.id == 3}" th:id="|eventButton${eStat.count}|" th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list" >
+							<span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
+							<br>
+							<span th:text="|Date: ${event.event.event_datetime}|"></span>
+							<br>
+							<span th:text="|Movie: ${event.event.movie.title}|"> </span>
+						</a>
+					</div>
+				</div>
+
+
+
+				<div class="col-8 tab-content" id="eventDetails">
+					<div class="tab-pane fade " th:each="event, eStat : ${events}" th:attr="data-event-id=${event.id}" th:id="|eventDetails${event.id}|">
+						<div class="row">
+							<div class="col-6 border-start border-2">
+								<span class="fs-2 fw-bold" th:text="${event.title}"></span>
+								<br>
+								<span class="fs-4" th:text="|Date: ${event.event_datetime}|"></span>
+								<br>
+								<span class="fs-4" th:text="|Location: ${event.location}|"> </span>
+								<br>
+								<span class="fs-4" th:text="|Movie: ${event.movie.title}|"> </span>
+								<br>
+								<span class="fs-4" th:text="|Description:|"> </span>
+								<br>
+								<span class="fs-6" th:text="|${event.description}|"> </span>
+								<br>
+								<div class="row mt-2">
+
+									<div class="col-6">
+										
+										<span class="fs-4" th:text="|Users attending:|"></span>
+										<div class="row justify-content-center" th:id="|userList${event.id}|">
+											<div class="col-10 my-1 py-1 bg-primary-subtle rounded-pill" th:each="user : ${event.invitedUsers}" 
+											th:text="|${user.user.userName}: ${user.user.firstName} ${user.user.lastName}|" 
+											th:if="${user.status.id == 2}" ></div>
+										</div>    
+									</div>
+
+									<div class="col-6" th:if="${event.owner.id == currentUser.id}">
+
+										<span class="fs-4" th:text="|Users invited:|" th:if="${event.owner.id == currentUser.id}"></span>
+										<div class="row justify-content-center" th:id="|userInviteList${event.id}|">
+											<div class="col-10 my-1 py-1 bg-primary-subtle rounded-pill" th:each="user : ${event.invitedUsers}" 
+											th:text="|${user.user.userName}: ${user.user.firstName} ${user.user.lastName}|" 
+											th:if="${user.status.id == 1}" ></div>
+										</div>   
+									</div>
+
+								</div>
+	
+								<div class="row m-2 justify-content-around">
+									<!-- owner buttons -->
+									<button type="button" id="inviteMoreButton" th:attr="data-event-id=${event.id}" 
+									class="btn btn-primary col-5" data-bs-toggle="modal" 
+									data-bs-target="#inviteModal" th:if="${event.owner.id == currentUser.id}" >Invite More Users</button>
+									<button type="button" id="deleteEventButton" th:attr="data-event-id=${event.id}" 
+									class="btn btn-danger  col-5" th:if="${event.owner.id == currentUser.id}" >Delete Event</button>
+									<!-- normal buttons -->
+									<button type="button" id="acceptInviteButton" th:attr="data-event-id=${event.id}" 
+									class="btn btn-primary col-5" th:if="${userJoinEvents[eStat.count - 1].status.id == 1}" >Accept Invite</button>
+									<button type="button" id="declineInviteButton" th:attr="data-event-id=${event.id}" 
+									class="btn btn-danger col-5" th:if="${userJoinEvents[eStat.count - 1].status.id == 1}" >Decline Invite</button>
+									
+								</div>
+
+
+
+						
+							
+						
+						
+						
+
+							</div>
+							<div class="col-6 border-start border-2">
+								<img class="img-fluid m-2" th:src="|https://image.tmdb.org/t/p/w300/${event.movie.posterPath}|" alt="">
+								<h4 th:text="|${event.movie.title} (${event.movie.year})|"></h4>
+								<h4 th:text="|Director: ${event.movie.director}|"></h4>
+								<h4>Summary: </h4>
+								<p th:text="|${event.movie.description} (From TMDB)|"></p>
+							</div>
+
+						</div>
+
+
+					</div>
+				
+				
+				</div>
+
+
+			</div>
+
+		</div>
+
+		<!-- Invite Modal -->
+		<div class="modal fade" id="inviteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+				<h1 class="modal-title fs-5" id="inviteModalLabel">Invite Users</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body" id="inviteModalBody">
+					<div id="modalAlert"></div>
+					<input class="form-control mb-2 col-5" type="text" id="inviteBox" placeholder="Enter 1 Username at a time" aria-label="Search">
+					<button class="btn btn-primary" id="addUserButton">+</button>
+					
+					<div id="modalContent" class="mt-2">
+
+					</div>
+				</div>
+				<div class="modal-footer">
+				<button type="button" class="btn btn-primary" id="inviteListButton" data-bs-dismiss="modal">Invite Listed Users</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				</div>
 			</div>
 		</div>
-	</div>
-</div>
+		</div>
 
-</div>
+	</div>
 
 </body>
 
@@ -350,7 +354,7 @@ inviteUsersButton.addEventListener("click", event=>
 			).done( function(data, status){
 
 				console.log(data)
-				alert("Users Successfully invited")
+				alert("Users Successfully invited", "success")
 				$("#userList" + eventId).empty();
 				$.getJSON(`http://localhost:8080/api/event/invited/${eventId}`, (data, status)=>{
 
