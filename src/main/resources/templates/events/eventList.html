@@ -167,14 +167,6 @@
 									
 								</div>
 
-
-
-						
-							
-						
-						
-						
-
 							</div>
 							<div class="col-6 border-start border-2">
 								<img class="img-fluid m-2" th:src="|https://image.tmdb.org/t/p/w300/${event.movie.posterPath}|" alt="">
@@ -182,6 +174,9 @@
 								<h4 th:text="|Director: ${event.movie.director}|"></h4>
 								<h4>Summary: </h4>
 								<p th:text="|${event.movie.description} (From TMDB)|"></p>
+								<div th:id="|providers${event.id}|">
+
+								</div>
 							</div>
 
 						</div>
@@ -305,6 +300,12 @@ for (let i = 0; i < details.length; i++){
 			children.item(i).classList.remove("show", "active")
 		}
 		document.getElementById(`eventDetails${eventId}`).classList.add("active", "show")
+		let providerElement = document.getElementById("providers"+ eventId)
+		if(!providerElement.firstElementChild){
+			let providers = getEventProviders();
+
+		}
+
 })}
 
 
@@ -483,70 +484,124 @@ inviteUsersButton.addEventListener("click", event=>
 
 function acceptInvite(){
 
-$.ajax(
-			{url:`http://localhost:8080/api/event/invite/accept/${eventId}`,
-			data: JSON.stringify({"eventId": eventId}),
-			method: "POST",
-			contentType:"application/json"}
-		)
-		.done((data, status) => {
-		//console.log("Accept")
-			let eventButton = document.getElementById(`eventButton${eventId}`);
-			let attendingTabChild = document.getElementById("attending-tab-pane").firstElementChild;
-			document.getElementById(`acceptInviteButton${eventId}`).remove()
-			attendingTabChild.appendChild(eventButton)
-		}).fail(function (request, status,error) {
-					console.log(request)
-					console.log(request.status)
-					console.log(request.statusText)
-					console.log("Invite User Failed")
-					alert("Failed to accept Invite", "danger")
+	$.ajax(
+				{url:`http://localhost:8080/api/event/invite/accept/${eventId}`,
+				data: JSON.stringify({"eventId": eventId}),
+				method: "POST",
+				contentType:"application/json"}
+			)
+			.done((data, status) => {
+			//console.log("Accept")
+				let eventButton = document.getElementById(`eventButton${eventId}`);
+				let attendingTabChild = document.getElementById("attending-tab-pane").firstElementChild;
+				document.getElementById(`acceptInviteButton${eventId}`).remove()
+				attendingTabChild.appendChild(eventButton)
+			}).fail(function (request, status,error) {
+						console.log(request)
+						console.log(request.status)
+						console.log(request.statusText)
+						console.log("Invite User Failed")
+						alert("Failed to accept Invite", "danger")
 
-				});
+					});
 
 }
 function declineInvite(){
 
-$.ajax(
-			{url:`http://localhost:8080/api/event/invite/decline/${eventId}`,
-			data: JSON.stringify({"eventId": eventId}),
-			method: "POST",
-			contentType:"application/json"}
-		)
-		.done((data, status) => {
-			const eventButton = document.getElementById(`eventButton${eventId}`);
-			const declinedTab = document.getElementById("declined-tab-pane").firstElementChild;
-			document.getElementById(`declineInviteButton${eventId}`).remove()
-			declinedTab.append(eventButton)
-		}).fail(function (request, status,error) {
-					console.log(request)
-					console.log(request.status)
-					console.log(request.statusText)
-					console.log("Invite User Failed")
-					alert("Failed to decline invite", "danger")
+	$.ajax(
+				{url:`http://localhost:8080/api/event/invite/decline/${eventId}`,
+				data: JSON.stringify({"eventId": eventId}),
+				method: "POST",
+				contentType:"application/json"}
+			)
+			.done((data, status) => {
+				const eventButton = document.getElementById(`eventButton${eventId}`);
+				const declinedTab = document.getElementById("declined-tab-pane").firstElementChild;
+				document.getElementById(`declineInviteButton${eventId}`).remove()
+				declinedTab.append(eventButton)
+			}).fail(function (request, status,error) {
+						console.log(request)
+						console.log(request.status)
+						console.log(request.statusText)
+						console.log("Invite User Failed")
+						alert("Failed to decline invite", "danger")
 
-				});
+					});
 
 }
 function deleteEvent(){
 
-$.ajax(
-			{url:`http://localhost:8080/api/event/delete/${eventId}`,
-			data: JSON.stringify({"eventId": eventId}),
-			method: "POST",
-			contentType:"application/json"}
-		)
-		.done((data, status) => {
-			document.getElementById(`eventButton${eventId}`).remove();
-			document.getElementById(`eventDetails${eventId}`).remove();
-		}).fail(function (request, status,error) {
-					console.log(request)
-					console.log(request.status)
-					console.log(request.statusText)
-					console.log("Invite User Failed")
-					alert("Failed delete event", "danger")
+	$.ajax(
+				{url:`http://localhost:8080/api/event/delete/${eventId}`,
+				data: JSON.stringify({"eventId": eventId}),
+				method: "POST",
+				contentType:"application/json"}
+			)
+			.done((data, status) => {
+				document.getElementById(`eventButton${eventId}`).remove();
+				document.getElementById(`eventDetails${eventId}`).remove();
+			}).fail(function (request, status,error) {
+						console.log(request)
+						console.log(request.status)
+						console.log(request.statusText)
+						console.log("Invite User Failed")
+						alert("Failed delete event", "danger")
 
-				});
+					});
+
+}
+
+async function getEventProviders(providers){
+	$.getJSON(`http://localhost:8080/api/tmdb/watchProviders/event/${eventId}`, function (data, status){
+
+		let providers = data;
+
+		let providerElement = document.getElementById("providers"+ eventId);
+
+		providers = data;
+            if(providers[0].type == "EMPTY"){
+                providerElement.innerHTML=
+            `
+            <h4>Providers: None Found</h4>
+        `}
+        else{
+            let rent = [];
+            let buy = [];
+            providers.forEach(element => {
+                if(element.type == "rent")
+                    rent.push(element);
+                else buy.push(element);
+            });
+            let rentString ="";
+            let buyString = "";
+            rent.forEach(element => {
+                rentString += `<a href="${element.link}"><img class="ms-2" src="https://image.tmdb.org/t/p/original${element.logo_path}" width="50" height="50"
+                 title="element.provider_name"></a>`
+            });
+
+            buy.forEach(element => {
+                buyString += `<a href="${element.link}"><img class="ms-2" src="https://image.tmdb.org/t/p/original${element.logo_path}" width="50" height="50"
+                 title="element.provider_name"></a>`
+            });
+
+            console.log(providers)
+            providerElement.innerHTML=            `
+            <h4>Providers (From <a href="https://www.justwatch.com">JustWatch</a>): </h4>
+            <h5>Rent:</h5>
+            ${rentString}
+            <h5>Buy:</h5>
+            ${buyString}
+        	`
+        
+
+	}}).fail(function (request, status,error) {
+						console.log(request)
+						console.log(request.status)
+						console.log(request.statusText)
+						console.log("Failed to fetch providers")
+						alert("Failed fetch providers", "danger")
+
+					});
 
 }
 $(document).ready(function () {
