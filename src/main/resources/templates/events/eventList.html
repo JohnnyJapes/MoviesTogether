@@ -39,27 +39,29 @@
 			<ul class="nav nav-tabs" id="eventTabs" role="tablist">
 
 				<li class="nav-item" role="presentation">
-					<button class="nav-link active" id="attending-tab" data-bs-toggle="tab" data-bs-target="#attending-tab-pane" 
+					<button class="nav-link active tabLink" id="attending-tab" data-bs-toggle="tab" data-bs-target="#attending-tab-pane" 
 					type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true"
 					>Attending</button>
 				</li>
 				<li class="nav-item" role="presentation">
-					<button class="nav-link" id="invited-tab" data-bs-toggle="tab" data-bs-target="#invited-tab-pane" 
+					<button class="nav-link tabLink" id="invited-tab" data-bs-toggle="tab" data-bs-target="#invited-tab-pane" 
 					type="button" role="tab" aria-controls="invited-tab-pane" aria-selected="true"
 					>Invited</button>
 				</li>
 				<li class="nav-item" role="presentation">
-					<button class="nav-link" id="declined-tab" data-bs-toggle="tab" data-bs-target="#declined-tab-pane" 
+					<button class="nav-link tabLink" id="declined-tab" data-bs-toggle="tab" data-bs-target="#declined-tab-pane" 
 					type="button" role="tab" aria-controls="declined-tab-pane" aria-selected="true"
 					>Declined</button>
 				</li>
 
 			</ul>
 			<div class="row mt-2 tab-content">
-				<div class="col-4 tab-pane fade show active" id="attending-tab-pane" aria-labelledby="attending-tab" tabindex="0">
+				<div class="col-4 tab-pane fade show active listTabPane" id="attending-tab-pane" aria-labelledby="attending-tab" tabindex="0">
 					<div class="list-group">
-						<a type="button" class="list-group-item list-group-item-action" th:each="event, eStat : ${userJoinEvents}" 
-							th:if="${event.status.id == 2}" th:id="|eventButton${event.event.id}|" th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list" >
+						<a type="button" class="list-group-item list-group-item-action details" th:each="event, eStat : ${userJoinEvents}" 
+							th:if="${event.status.id == 2}" th:id="|eventButton${event.event.id}|" 
+							th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list"
+							th:attr="data-event-id=${event.event.id}" >
 							<span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
 							<br>
 							<span th:text="|Date: ${event.event.event_datetime}|"></span>
@@ -68,7 +70,7 @@
 						</a>
 					</div>
 				</div>
-				<div class="col-4 tab-pane fade" id="invited-tab-pane" aria-labelledby="invited-tab" tabindex="0">
+				<div class="col-4 tab-pane fade listTabPane" id="invited-tab-pane" aria-labelledby="invited-tab" tabindex="0">
 					<div class="list-group">
 
 						<a type="button" class="list-group-item list-group-item-action details" th:each="event, eStat : ${userJoinEvents}" 
@@ -83,11 +85,14 @@
 						</a>
 					</div>
 				</div>
-				<div class="col-4 tab-pane fade" id="declined-tab-pane" aria-labelledby="declined-tab" tabindex="0">
+				<div class="col-4 tab-pane fade listTabPane" id="declined-tab-pane" aria-labelledby="declined-tab" tabindex="0">
 					<div class="list-group">
 
-						<a type="button" class="list-group-item list-group-item-action" th:each="event, eStat : ${userJoinEvents}" 
-							th:if="${event.status.id == 3}" th:id="|eventButton${event.event.id}|" th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list" >
+						<a type="button" class="list-group-item list-group-item-action details" th:each="event, eStat : ${userJoinEvents}" 
+							th:if="${event.status.id == 3}" th:id="|eventButton${event.event.id}|" 
+							th:href="|#eventDetails${event.event.id}|" 
+							data-bs-toggle="list" 
+							th:attr="data-event-id=${event.event.id}">
 							<span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
 							<br>
 							<span th:text="|Date: ${event.event.event_datetime}|"></span>
@@ -145,12 +150,20 @@
 									class="btn btn-primary col-5" data-bs-toggle="modal" 
 									data-bs-target="#inviteModal" th:if="${event.owner.id == currentUser.id}" >Invite More Users</button>
 									<button type="button" id="deleteEventButton" th:attr="data-event-id=${event.id}" 
-									class="btn btn-danger  col-5" th:if="${event.owner.id == currentUser.id}" >Delete Event</button>
+									class="btn btn-danger  col-5" 
+									th:if="${event.owner.id == currentUser.id}" 
+									onclick="deleteEvent()">Delete Event</button>
 									<!-- normal buttons -->
-									<button type="button" id="acceptInviteButton" th:attr="data-event-id=${event.id}" 
-									class="btn btn-primary col-5" th:if="${userJoinEvents[eStat.count - 1].status.id == 1}" >Accept Invite</button>
-									<button type="button" id="declineInviteButton" th:attr="data-event-id=${event.id}" 
-									class="btn btn-danger col-5" th:if="${userJoinEvents[eStat.count - 1].status.id == 1}" >Decline Invite</button>
+									<button type="button" id="acceptInviteButton" 
+									th:id="|acceptInviteButton${event.id}|"
+									th:attr="data-event-id=${event.id}" 
+									class="btn btn-primary col-5" th:if="${userJoinEvents[eStat.count - 1].status.id == 1 OR userJoinEvents[eStat.count - 1].status.id == 3}" 
+									onClick="acceptInvite()">Accept Invite</button>
+									<button type="button" id="declineInviteButton"
+									th:id="|declineInviteButton${event.id}|"
+									th:attr="data-event-id=${event.id}" 
+									class="btn btn-danger col-5" th:if="${event.owner.id != currentUser.id}? ${userJoinEvents[eStat.count - 1].status.id == 1 OR userJoinEvents[eStat.count - 1].status.id == 2} : 'false'" 
+									onclick="declineInvite()">Decline Invite</button>
 									
 								</div>
 
@@ -227,9 +240,13 @@ const inviteMoreButton = document.getElementById("inviteMoreButton");
 const inviteBox = document.getElementById("inviteBox");
 const modalContent = $("#modalContent");
 const inviteUsersButton = document.getElementById("inviteListButton");
-const acceptInviteButton = document.getElementById("acceptInviteButton");
+const deleteEventButton = document.getElementById("deleteEventButton");
 const declineInviteButton = document.getElementById("declineInviteButton");
 const details = document.getElementsByClassName("details");
+const mainTabs = document.getElementsByClassName("tabLink")
+const listTabPanes = document.getElementsByClassName("listTabPane")
+const invitedTabPane = document.getElementById("invited-tab-pane")
+const declinedTabPane = document.getElementById("declined-tab-pane")
 
 let currentUsers = [];
 let newUsers = [];
@@ -272,6 +289,22 @@ for (let i = 0; i < details.length; i++){
 	details.item(i).addEventListener("show.bs.tab", event=>{
 
 		setEventId(event.target.dataset.eventId);
+		let element = event.target.nextElementSibling;
+		while (element){
+			element.classList.remove("show", "active")
+			element = element.nextElementSibling
+		}
+		element = event.target.previousElementSibling
+		while (element){
+			element.classList.remove("show", "active")
+			element = element.previousElementSibling
+		}
+		let eventDetails = document.getElementById("eventDetails");
+		let children = eventDetails.children;
+		for (let i = 0; i < children.length; i++){
+			children.item(i).classList.remove("show", "active")
+		}
+		document.getElementById(`eventDetails${eventId}`).classList.add("active", "show")
 })}
 
 
@@ -347,6 +380,24 @@ inviteBox.addEventListener("keydown", event=>{
 
 })
 
+
+
+for (let j = 0; j < mainTabs.length; j++){
+
+	mainTabs.item(j).addEventListener("show.bs.tab", event=>{
+		let eventDetails = document.getElementById("eventDetails");
+		let children = eventDetails.children;
+		for (let i = 0; i < children.length; i++){
+			children.item(i).classList.remove("show", "active")
+		}
+		let listChildren = listTabPanes.item(j).firstElementChild.children;
+		for (let i = 0; i < listChildren.length; i++){
+			listChildren.item(i).classList.remove("show", "active")
+		}
+	})
+}
+
+
 function removeArrayItem(array, value){
 
 	const index = array.indexOf(value);
@@ -379,6 +430,7 @@ inviteUsersButton.addEventListener("click", event=>
 
 					currentUsers = data;
 					newUsers = [];
+					modalContent.empty();
 
 					}).fail(function (request, status,error) {
 						console.log(request)
@@ -428,21 +480,75 @@ inviteUsersButton.addEventListener("click", event=>
 	}
 )
 
-acceptInviteButton.addEventListener("click", event=>{
 
-	$.ajax(
-				{url:`http://localhost:8080/api/event/invite/accept/${eventId}`,
-				data: JSON.stringify({"eventId": eventId}),
-				method: "POST",
-				contentType:"application/json"}
-			)
-			.done((data, status) => {
-				const eventButton = document.getElementById(`EventButton${eventId}`);
-				const attendingTab = document.getElementById("attending-tab-pane").firstElementChild;
-				attendingTab.append(eventButton)
-			})
+function acceptInvite(){
 
-})
+$.ajax(
+			{url:`http://localhost:8080/api/event/invite/accept/${eventId}`,
+			data: JSON.stringify({"eventId": eventId}),
+			method: "POST",
+			contentType:"application/json"}
+		)
+		.done((data, status) => {
+		//console.log("Accept")
+			let eventButton = document.getElementById(`eventButton${eventId}`);
+			let attendingTabChild = document.getElementById("attending-tab-pane").firstElementChild;
+			document.getElementById(`acceptInviteButton${eventId}`).remove()
+			attendingTabChild.appendChild(eventButton)
+		}).fail(function (request, status,error) {
+					console.log(request)
+					console.log(request.status)
+					console.log(request.statusText)
+					console.log("Invite User Failed")
+					alert("Failed to accept Invite", "danger")
+
+				});
+
+}
+function declineInvite(){
+
+$.ajax(
+			{url:`http://localhost:8080/api/event/invite/decline/${eventId}`,
+			data: JSON.stringify({"eventId": eventId}),
+			method: "POST",
+			contentType:"application/json"}
+		)
+		.done((data, status) => {
+			const eventButton = document.getElementById(`eventButton${eventId}`);
+			const declinedTab = document.getElementById("declined-tab-pane").firstElementChild;
+			document.getElementById(`declineInviteButton${eventId}`).remove()
+			declinedTab.append(eventButton)
+		}).fail(function (request, status,error) {
+					console.log(request)
+					console.log(request.status)
+					console.log(request.statusText)
+					console.log("Invite User Failed")
+					alert("Failed to decline invite", "danger")
+
+				});
+
+}
+function deleteEvent(){
+
+$.ajax(
+			{url:`http://localhost:8080/api/event/delete/${eventId}`,
+			data: JSON.stringify({"eventId": eventId}),
+			method: "POST",
+			contentType:"application/json"}
+		)
+		.done((data, status) => {
+			document.getElementById(`eventButton${eventId}`).remove();
+			document.getElementById(`eventDetails${eventId}`).remove();
+		}).fail(function (request, status,error) {
+					console.log(request)
+					console.log(request.status)
+					console.log(request.statusText)
+					console.log("Invite User Failed")
+					alert("Failed delete event", "danger")
+
+				});
+
+}
 $(document).ready(function () {
 
 

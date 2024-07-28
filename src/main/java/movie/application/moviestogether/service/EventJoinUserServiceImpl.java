@@ -88,6 +88,26 @@ public class EventJoinUserServiceImpl  implements EventJoinUserService{
     }
 
     @Override
+    public void setDeclined(int eventId, int userId) {
+        Optional<Status> result = statusRepository.findById(3);
+        Status status = result.get();
+        Event event = eventRepository.findById(eventId);
+        Optional<User> userResult = userRepository.findById(userId);
+        User user;
+        if (userResult.isPresent()) user = userResult.get();
+        else throw new Error("No User Found");
+        EventJoinUser eventJoinUser = eventJoinUserRepository.findByUserAndEvent(user, event);
+        if (eventJoinUser != null) {
+            eventJoinUser.setStatus(status);
+            save(eventJoinUser);
+        }
+        else{
+            System.out.println("User: "+user.getId() +", event: "+ eventId );
+        }
+
+    }
+
+    @Override
     public void sortEvents(List<EventJoinUser> eventJoins){
 
         Collections.sort(eventJoins, new EventJoinHelper());

@@ -12,5 +12,6 @@ public interface EventJoinUserService {
     void setInvited(EventJoinUser eventJoinUser);
     void setDeclined(EventJoinUser eventJoinUser);
     void sortEvents(List<EventJoinUser> eventJoins);
+    void setDeclined(int eventId, int userId);
 
 }

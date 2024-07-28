@@ -72,6 +72,23 @@ public class EventRESTController {
     }
 
 
+    //Delete Event
+    @PostMapping("/delete/{eventId}")
+    public String deleteEvent(@PathVariable int eventId, Authentication authentication) {
+        String username = authentication.getName();
+        System.out.println("Inviting users, requester: username: " +username);
+        User user = userService.findByUserName(username);
+
+        if (user.getId() != eventService.findById(eventId).getOwner().getId()){
+            throw new ResponseStatusException(HttpStatusCode.valueOf(403));
+        }
+        eventService.delete(eventService.findById(eventId));
+        
+        
+        return "Successfully deleted Event: " +eventId;
+    }
+    
+
 
     //@PostMapping("/invite")
     @RequestMapping(method = RequestMethod.POST, value = "/invite")
@@ -103,12 +120,22 @@ public class EventRESTController {
     }
 
     @PostMapping("/invite/accept/{eventId}")
-    public String postMethodName(@PathVariable int eventId, Authentication authentication) {
+    public String acceptInvite(@PathVariable int eventId, Authentication authentication) {
         String username = authentication.getName();
         System.out.println("Accepting Invite, requester: username: " +username);
         User user = userService.findByUserName(username);
 
         eventJoinUserService.setAttending(eventId, user.getId());
+        return "Successfully accepted invite to Event: " + eventId;
+    }
+
+    @PostMapping("/invite/decline/{eventId}")
+    public String declineInvite(@PathVariable int eventId, Authentication authentication) {
+        String username = authentication.getName();
+        System.out.println("Declining Invite, requester: username: " +username);
+        User user = userService.findByUserName(username);
+
+        eventJoinUserService.setDeclined(eventId, user.getId());
         return "Successfully accepted invite to Event: " + eventId;
     }
     
