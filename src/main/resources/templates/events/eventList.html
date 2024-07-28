@@ -59,7 +59,7 @@
 				<div class="col-4 tab-pane fade show active" id="attending-tab-pane" aria-labelledby="attending-tab" tabindex="0">
 					<div class="list-group">
 						<a type="button" class="list-group-item list-group-item-action" th:each="event, eStat : ${userJoinEvents}" 
-							th:if="${event.status.id == 2}" th:id="|eventButton${eStat.count}|" th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list" >
+							th:if="${event.status.id == 2}" th:id="|eventButton${event.event.id}|" th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list" >
 							<span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
 							<br>
 							<span th:text="|Date: ${event.event.event_datetime}|"></span>
@@ -72,7 +72,7 @@
 					<div class="list-group">
 
 						<a type="button" class="list-group-item list-group-item-action details" th:each="event, eStat : ${userJoinEvents}" 
-							th:if="${event.status.id == 1}" th:id="|eventButton${eStat.count}|" 
+							th:if="${event.status.id == 1}" th:id="|eventButton${event.event.id}|" 
 							th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list"
 							th:attr="data-event-id=${event.event.id}">
 							<span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
@@ -87,7 +87,7 @@
 					<div class="list-group">
 
 						<a type="button" class="list-group-item list-group-item-action" th:each="event, eStat : ${userJoinEvents}" 
-							th:if="${event.status.id == 3}" th:id="|eventButton${eStat.count}|" th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list" >
+							th:if="${event.status.id == 3}" th:id="|eventButton${event.event.id}|" th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list" >
 							<span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
 							<br>
 							<span th:text="|Date: ${event.event.event_datetime}|"></span>
@@ -311,11 +311,20 @@ addUserButton.addEventListener("click", event=>{
 				else{
 					newUsers.push(userNameInput)
 					modalContent.append(`
-					<button type="button" class=" mb-2 btn btn-primary">${userNameInput}</button>
+					<span class="m-2 invite">
+						<span class="p-2  bg-primary-subtle rounded-start-pill">${userNameInput}</span><span class="bg-danger-subtle p-2 rounded-end-pill"><button type="button" class="pt-3 btn-close" id="inviteClose${userNameInput}" aria-label="Close"></button>
+							</span>
+						
+					</span>
+					
 					`)
 				}
 				inviteBox.value = "";
-				
+				document.getElementById(`inviteClose${userNameInput}`).addEventListener("click", event=>{
+					removeArrayItem(newUsers, userNameInput)
+					event.currentTarget.closest("span.invite").remove()
+
+								})
 			});
 
 		}
@@ -337,6 +346,15 @@ inviteBox.addEventListener("keydown", event=>{
 	if(event.key == "Enter") addUserButton.click();
 
 })
+
+function removeArrayItem(array, value){
+
+	const index = array.indexOf(value);
+	if (index > -1) { // only splice array when item is found
+	array.splice(index, 1); // 2nd parameter means remove one item only
+	}
+	
+}
 
 inviteUsersButton.addEventListener("click", event=>
 
@@ -360,6 +378,7 @@ inviteUsersButton.addEventListener("click", event=>
 
 
 					currentUsers = data;
+					newUsers = [];
 
 					}).fail(function (request, status,error) {
 						console.log(request)
@@ -391,6 +410,7 @@ inviteUsersButton.addEventListener("click", event=>
 					)
 					}
 					
+					
 				});
 
 
@@ -416,6 +436,11 @@ acceptInviteButton.addEventListener("click", event=>{
 				method: "POST",
 				contentType:"application/json"}
 			)
+			.done((data, status) => {
+				const eventButton = document.getElementById(`EventButton${eventId}`);
+				const attendingTab = document.getElementById("attending-tab-pane").firstElementChild;
+				attendingTab.append(eventButton)
+			})
 
 })
 $(document).ready(function () {

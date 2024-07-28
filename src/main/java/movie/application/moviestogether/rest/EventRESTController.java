@@ -45,9 +45,20 @@ public class EventRESTController {
     }
 
 
-
-
     //return event
+    @GetMapping("/get/{eventId}")
+    public Event getEvent(@PathVariable int eventId) {
+        System.out.println("getting event: " +eventId);
+
+        Event event = eventService.findById(eventId);
+        if(event != null){
+            return event;
+        }
+        else throw new ResponseStatusException( HttpStatusCode.valueOf(404));
+    }
+
+
+    //return invited users for event
     @GetMapping("/invited/{eventId}")
     public List<EventJoinUser> getInvitedUsers(@PathVariable int eventId) {
         System.out.println("invited Users");
@@ -67,7 +78,7 @@ public class EventRESTController {
     public String inviteUsersToEvent(@RequestBody InviteUsersRequest invitedUsers, Authentication authentication, HttpServletResponse response) {
         //TODO: process POST request
         String username = authentication.getName();
-        System.out.println("username: " +username);
+        System.out.println("Inviting users, requester: username: " +username);
         User user = userService.findByUserName(username);
 
         int eventId = invitedUsers.getEventId();
@@ -94,15 +105,10 @@ public class EventRESTController {
     @PostMapping("/invite/accept/{eventId}")
     public String postMethodName(@PathVariable int eventId, Authentication authentication) {
         String username = authentication.getName();
-        System.out.println("username: " +username);
+        System.out.println("Accepting Invite, requester: username: " +username);
         User user = userService.findByUserName(username);
 
         eventJoinUserService.setAttending(eventId, user.getId());
-
-        
-
-
-        
         return "Successfully accepted invite to Event: " + eventId;
     }
     
