@@ -66,9 +66,7 @@
             </div>
             <div class="col-4 tab-pane fade" id="invited-tab-pane" aria-labelledby="invited-tab" tabindex="0">
                 <div class="list-group">
-                    <button type="button" class="list-group-item list-group-item-action active" data-bs-toggle="list" aria-current="true">
-                      The current button
-                    </button>
+
                     <a type="button" class="list-group-item list-group-item-action details" th:each="event, eStat : ${userJoinEvents}" 
                         th:if="${event.status.id == 1}" th:id="|eventButton${eStat.count}|" 
 						th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list"
@@ -83,9 +81,7 @@
             </div>
             <div class="col-4 tab-pane fade" id="declined-tab-pane" aria-labelledby="declined-tab" tabindex="0">
                 <div class="list-group">
-                    <button type="button" class="list-group-item list-group-item-action active" data-bs-toggle="list" aria-current="true">
-                      The current button
-                    </button>
+
                     <a type="button" class="list-group-item list-group-item-action" th:each="event, eStat : ${userJoinEvents}" 
                         th:if="${event.status.id == 3}" th:id="|eventButton${eStat.count}|" th:href="|#eventDetails${event.event.id}|" data-bs-toggle="list" >
                         <span class="fs-5 fw-bold" th:text="|${event.event.title}|"> </span>
