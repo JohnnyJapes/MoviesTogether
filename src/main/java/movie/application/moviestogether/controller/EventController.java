@@ -213,6 +213,7 @@ public class EventController {
 
         model.addAttribute("userJoinEvents", userEvents);
         model.addAttribute("events", events);
+        model.addAttribute("currentUser", user);
 
         return "events/eventList";
     }
@@ -232,6 +233,7 @@ public class EventController {
     
             model.addAttribute("userJoinEvents", userEvents);
             model.addAttribute("events", events);
+            model.addAttribute("currentUser", user);
             return "events/eventList";
         }
     
