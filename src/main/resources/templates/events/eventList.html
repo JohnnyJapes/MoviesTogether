@@ -336,13 +336,15 @@ addUserButton.addEventListener("click", event=>{
 
 		console.log(data)
 		let userNameInput = inviteBox.value;
+		let duplicate = false;
 		if(data == "True"){
 			currentUsers.forEach(user => {
 				if(user.user.userName == userNameInput){
-					modalAlert("User already invited", "danger")
+					duplicate = true;
 				}
-				else if(newUsers.includes(userNameInput)) modalAlert("User already invited", "danger")
-				else{
+				else if(newUsers.includes(userNameInput)) duplicate = true;
+			});
+				if(duplicate != true){
 					newUsers.push(userNameInput)
 					modalContent.append(`
 					<span class="m-2 invite">
@@ -352,14 +354,15 @@ addUserButton.addEventListener("click", event=>{
 					</span>
 					
 					`)
-				}
+				
 				inviteBox.value = "";
 				document.getElementById(`inviteClose${userNameInput}`).addEventListener("click", event=>{
 					removeArrayItem(newUsers, userNameInput)
 					event.currentTarget.closest("span.invite").remove()
-
 								})
-			});
+				}	
+				else{modalAlert("User already Invited", "danger")}					
+			
 
 		}
 		else{
@@ -576,12 +579,12 @@ async function getEventProviders(providers){
             let buyString = "";
             rent.forEach(element => {
                 rentString += `<a href="${element.link}"><img class="ms-2" src="https://image.tmdb.org/t/p/original${element.logo_path}" width="50" height="50"
-                 title="element.provider_name"></a>`
+                 title="${element.provider_name}"></a>`
             });
 
             buy.forEach(element => {
                 buyString += `<a href="${element.link}"><img class="ms-2" src="https://image.tmdb.org/t/p/original${element.logo_path}" width="50" height="50"
-                 title="element.provider_name"></a>`
+                 title="${element.provider_name}"></a>`
             });
 
             console.log(providers)
