@@ -15,3 +15,7 @@ Prerequisites
 
 Springboot
 MySQL
+
+Some Examples:
+![Screenshot 2025-04-02 at 07-00-56 MoviesTogether - WatchLists](https://github.com/user-attachments/assets/a48b4138-52d7-43d7-8e85-b264209c8ddb)
+![Screenshot 2025-04-02 at 07-03-59 Events](https://github.com/user-attachments/assets/f76ea822-1641-4240-86c4-e31846a12103)
