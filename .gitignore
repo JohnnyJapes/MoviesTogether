@@ -33,3 +33,6 @@ build/
 .vscode/
 apikeys.env
 /logs/**
+MoviesTogether.jar
+.gitignore
+sql/Dump20240803.sql
